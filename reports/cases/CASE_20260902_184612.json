@@ -1,0 +1,23 @@
+{
+  "case_id": "CASE_20260902_184612",
+  "title": "Operation Swift Trace",
+  "description": "Forensic analysis of synthetic cluster and dispersion",
+  "status": "OPEN",
+  "created_at": "2026-09-02T18:46:12.386881",
+  "updated_at": "2026-09-02T18:46:12.416808",
+  "selected_addresses": [
+    "1ConsolidationMasterVault9999999999"
+  ],
+  "selected_transactions": [
+    "tx_fanout_dispersion_0001_cccccccccccccccccccccccccccccccccccccccccc"
+  ],
+  "selected_clusters": [],
+  "notes": [
+    {
+      "author": "Agent Lead",
+      "text": "Confirmed high fan-out pattern matching dispersion behavior",
+      "timestamp": "2026-09-02T18:46:12.416808"
+    }
+  ],
+  "risk_summary": {}
+}

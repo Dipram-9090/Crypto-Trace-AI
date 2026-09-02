@@ -1,0 +1,468 @@
+[
+  {
+    "txid": "tx_normal_0001_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "timestamp": "2026-01-15T12:00:00",
+    "input_addresses": [
+      "1NormUser1MainnetAddress111111111111"
+    ],
+    "output_addresses": [
+      "1Merchant1StoreAddress222222222222",
+      "1NormUser1ChangeAddress33333333333"
+    ],
+    "input_amounts": [
+      1.5
+    ],
+    "output_amounts": [
+      0.45,
+      1.0498
+    ],
+    "fee": 0.0002,
+    "pattern_type": "NORMAL_P2P"
+  },
+  {
+    "txid": "tx_normal_0002_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "timestamp": "2026-01-15T14:00:00",
+    "input_addresses": [
+      "1NormUser2MainnetAddress111111111111"
+    ],
+    "output_addresses": [
+      "1Merchant2StoreAddress222222222222",
+      "1NormUser2ChangeAddress33333333333"
+    ],
+    "input_amounts": [
+      1.5
+    ],
+    "output_amounts": [
+      0.45,
+      1.0498
+    ],
+    "fee": 0.0002,
+    "pattern_type": "NORMAL_P2P"
+  },
+  {
+    "txid": "tx_normal_0003_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "timestamp": "2026-01-15T16:00:00",
+    "input_addresses": [
+      "1NormUser3MainnetAddress111111111111"
+    ],
+    "output_addresses": [
+      "1Merchant3StoreAddress222222222222",
+      "1NormUser3ChangeAddress33333333333"
+    ],
+    "input_amounts": [
+      1.5
+    ],
+    "output_amounts": [
+      0.45,
+      1.0498
+    ],
+    "fee": 0.0002,
+    "pattern_type": "NORMAL_P2P"
+  },
+  {
+    "txid": "tx_normal_0004_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "timestamp": "2026-01-15T18:00:00",
+    "input_addresses": [
+      "1NormUser4MainnetAddress111111111111"
+    ],
+    "output_addresses": [
+      "1Merchant4StoreAddress222222222222",
+      "1NormUser4ChangeAddress33333333333"
+    ],
+    "input_amounts": [
+      1.5
+    ],
+    "output_amounts": [
+      0.45,
+      1.0498
+    ],
+    "fee": 0.0002,
+    "pattern_type": "NORMAL_P2P"
+  },
+  {
+    "txid": "tx_normal_0005_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "timestamp": "2026-01-15T20:00:00",
+    "input_addresses": [
+      "1NormUser5MainnetAddress111111111111"
+    ],
+    "output_addresses": [
+      "1Merchant5StoreAddress222222222222",
+      "1NormUser5ChangeAddress33333333333"
+    ],
+    "input_amounts": [
+      1.5
+    ],
+    "output_amounts": [
+      0.45,
+      1.0498
+    ],
+    "fee": 0.0002,
+    "pattern_type": "NORMAL_P2P"
+  },
+  {
+    "txid": "tx_fanin_consolidation_0001_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "timestamp": "2026-01-16T14:00:00",
+    "input_addresses": [
+      "1ConsolSource01Addr11111111111111",
+      "1ConsolSource02Addr11111111111111",
+      "1ConsolSource03Addr11111111111111",
+      "1ConsolSource04Addr11111111111111",
+      "1ConsolSource05Addr11111111111111",
+      "1ConsolSource06Addr11111111111111",
+      "1ConsolSource07Addr11111111111111",
+      "1ConsolSource08Addr11111111111111",
+      "1ConsolSource09Addr11111111111111",
+      "1ConsolSource10Addr11111111111111"
+    ],
+    "output_addresses": [
+      "1ConsolidationMasterVault9999999999"
+    ],
+    "input_amounts": [
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.25
+    ],
+    "output_amounts": [
+      2.499
+    ],
+    "fee": 0.001,
+    "pattern_type": "HIGH_FAN_IN"
+  },
+  {
+    "txid": "tx_fanout_dispersion_0001_cccccccccccccccccccccccccccccccccccccccccc",
+    "timestamp": "2026-01-16T18:00:00",
+    "input_addresses": [
+      "1DispersionSourceVault88888888888"
+    ],
+    "output_addresses": [
+      "1DispersionTarget01Addr222222222222",
+      "1DispersionTarget02Addr222222222222",
+      "1DispersionTarget03Addr222222222222",
+      "1DispersionTarget04Addr222222222222",
+      "1DispersionTarget05Addr222222222222",
+      "1DispersionTarget06Addr222222222222",
+      "1DispersionTarget07Addr222222222222",
+      "1DispersionTarget08Addr222222222222",
+      "1DispersionTarget09Addr222222222222",
+      "1DispersionTarget10Addr222222222222",
+      "1DispersionTarget11Addr222222222222",
+      "1DispersionTarget12Addr222222222222",
+      "1DispersionTarget13Addr222222222222",
+      "1DispersionTarget14Addr222222222222",
+      "1DispersionTarget15Addr222222222222"
+    ],
+    "input_amounts": [
+      2.255
+    ],
+    "output_amounts": [
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15,
+      0.15
+    ],
+    "fee": 0.005,
+    "pattern_type": "HIGH_FAN_OUT"
+  },
+  {
+    "txid": "tx_rapid_hop_01_dddddddddddddddddddddddddddddddddddddddddddddddd",
+    "timestamp": "2026-01-17T11:02:00",
+    "input_addresses": [
+      "1RapidRelayStartAddr000000000000"
+    ],
+    "output_addresses": [
+      "1RapidRelayHop01Addr33333333333333"
+    ],
+    "input_amounts": [
+      5.0
+    ],
+    "output_amounts": [
+      4.9995
+    ],
+    "fee": 0.0005,
+    "pattern_type": "RAPID_MOVEMENT"
+  },
+  {
+    "txid": "tx_rapid_hop_02_dddddddddddddddddddddddddddddddddddddddddddddddd",
+    "timestamp": "2026-01-17T11:04:00",
+    "input_addresses": [
+      "1RapidRelayHop01Addr33333333333333"
+    ],
+    "output_addresses": [
+      "1RapidRelayHop02Addr33333333333333"
+    ],
+    "input_amounts": [
+      4.9995
+    ],
+    "output_amounts": [
+      4.9990000000000006
+    ],
+    "fee": 0.0005,
+    "pattern_type": "RAPID_MOVEMENT"
+  },
+  {
+    "txid": "tx_rapid_hop_03_dddddddddddddddddddddddddddddddddddddddddddddddd",
+    "timestamp": "2026-01-17T11:06:00",
+    "input_addresses": [
+      "1RapidRelayHop02Addr33333333333333"
+    ],
+    "output_addresses": [
+      "1RapidRelayHop03Addr33333333333333"
+    ],
+    "input_amounts": [
+      4.9990000000000006
+    ],
+    "output_amounts": [
+      4.998500000000001
+    ],
+    "fee": 0.0005,
+    "pattern_type": "RAPID_MOVEMENT"
+  },
+  {
+    "txid": "tx_rapid_hop_04_dddddddddddddddddddddddddddddddddddddddddddddddd",
+    "timestamp": "2026-01-17T11:08:00",
+    "input_addresses": [
+      "1RapidRelayHop03Addr33333333333333"
+    ],
+    "output_addresses": [
+      "1RapidRelayHop04Addr33333333333333"
+    ],
+    "input_amounts": [
+      4.998500000000001
+    ],
+    "output_amounts": [
+      4.998000000000001
+    ],
+    "fee": 0.0005,
+    "pattern_type": "RAPID_MOVEMENT"
+  },
+  {
+    "txid": "tx_rapid_hop_05_dddddddddddddddddddddddddddddddddddddddddddddddd",
+    "timestamp": "2026-01-17T11:10:00",
+    "input_addresses": [
+      "1RapidRelayHop04Addr33333333333333"
+    ],
+    "output_addresses": [
+      "1RapidRelayHop05Addr33333333333333"
+    ],
+    "input_amounts": [
+      4.998000000000001
+    ],
+    "output_amounts": [
+      4.997500000000001
+    ],
+    "fee": 0.0005,
+    "pattern_type": "RAPID_MOVEMENT"
+  },
+  {
+    "txid": "tx_peel_chain_step_01_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "timestamp": "2026-01-18T15:00:00",
+    "input_addresses": [
+      "1PeelChainOriginAddr111111111111"
+    ],
+    "output_addresses": [
+      "1PeelPaymentDest01Addr44444444444",
+      "1PeelChangeHop01Addr555555555555"
+    ],
+    "input_amounts": [
+      20.0
+    ],
+    "output_amounts": [
+      0.5,
+      19.4997
+    ],
+    "fee": 0.0003,
+    "pattern_type": "PEEL_CHAIN"
+  },
+  {
+    "txid": "tx_peel_chain_step_02_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "timestamp": "2026-01-18T18:00:00",
+    "input_addresses": [
+      "1PeelChangeHop01Addr555555555555"
+    ],
+    "output_addresses": [
+      "1PeelPaymentDest02Addr44444444444",
+      "1PeelChangeHop02Addr555555555555"
+    ],
+    "input_amounts": [
+      19.4997
+    ],
+    "output_amounts": [
+      0.5,
+      18.9994
+    ],
+    "fee": 0.0003,
+    "pattern_type": "PEEL_CHAIN"
+  },
+  {
+    "txid": "tx_peel_chain_step_03_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "timestamp": "2026-01-18T21:00:00",
+    "input_addresses": [
+      "1PeelChangeHop02Addr555555555555"
+    ],
+    "output_addresses": [
+      "1PeelPaymentDest03Addr44444444444",
+      "1PeelChangeHop03Addr555555555555"
+    ],
+    "input_amounts": [
+      18.9994
+    ],
+    "output_amounts": [
+      0.5,
+      18.499100000000002
+    ],
+    "fee": 0.0003,
+    "pattern_type": "PEEL_CHAIN"
+  },
+  {
+    "txid": "tx_peel_chain_step_04_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "timestamp": "2026-01-19T00:00:00",
+    "input_addresses": [
+      "1PeelChangeHop03Addr555555555555"
+    ],
+    "output_addresses": [
+      "1PeelPaymentDest04Addr44444444444",
+      "1PeelChangeHop04Addr555555555555"
+    ],
+    "input_amounts": [
+      18.499100000000002
+    ],
+    "output_amounts": [
+      0.5,
+      17.998800000000003
+    ],
+    "fee": 0.0003,
+    "pattern_type": "PEEL_CHAIN"
+  },
+  {
+    "txid": "tx_peel_chain_step_05_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "timestamp": "2026-01-19T03:00:00",
+    "input_addresses": [
+      "1PeelChangeHop04Addr555555555555"
+    ],
+    "output_addresses": [
+      "1PeelPaymentDest05Addr44444444444",
+      "1PeelChangeHop05Addr555555555555"
+    ],
+    "input_amounts": [
+      17.998800000000003
+    ],
+    "output_amounts": [
+      0.5,
+      17.498500000000003
+    ],
+    "fee": 0.0003,
+    "pattern_type": "PEEL_CHAIN"
+  },
+  {
+    "txid": "tx_coinjoin_mixing_structure_0001_ffffffffffffffffffffffffffffffffff",
+    "timestamp": "2026-01-19T16:00:00",
+    "input_addresses": [
+      "1MixParticipant01InAddr666666666666",
+      "1MixParticipant02InAddr666666666666",
+      "1MixParticipant03InAddr666666666666",
+      "1MixParticipant04InAddr666666666666",
+      "1MixParticipant05InAddr666666666666"
+    ],
+    "output_addresses": [
+      "1MixAnonymized01OutAddr77777777777",
+      "1MixAnonymized02OutAddr77777777777",
+      "1MixAnonymized03OutAddr77777777777",
+      "1MixAnonymized04OutAddr77777777777",
+      "1MixAnonymized05OutAddr77777777777"
+    ],
+    "input_amounts": [
+      0.1002,
+      0.1002,
+      0.1002,
+      0.1002,
+      0.1002
+    ],
+    "output_amounts": [
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "fee": 0.001,
+    "pattern_type": "MIXING_LIKE_STRUCTURE"
+  },
+  {
+    "txid": "tx_dormant_initial_funding_0001_11111111111111111111111111111111111111",
+    "timestamp": "2025-06-09T10:00:00",
+    "input_addresses": [
+      "1OldMinerFundingPool00000000000000"
+    ],
+    "output_addresses": [
+      "1DormantWhaleColdWalletAddr8888888"
+    ],
+    "input_amounts": [
+      50.0
+    ],
+    "output_amounts": [
+      49.999
+    ],
+    "fee": 0.001,
+    "pattern_type": "DORMANT_FUNDING"
+  },
+  {
+    "txid": "tx_dormant_sudden_activation_0002_2222222222222222222222222222222222222",
+    "timestamp": "2026-01-20T13:00:00",
+    "input_addresses": [
+      "1DormantWhaleColdWalletAddr8888888"
+    ],
+    "output_addresses": [
+      "1SuddenRecipientOffshoreVault99999",
+      "1DormantWhaleResidualChange0000000"
+    ],
+    "input_amounts": [
+      49.999
+    ],
+    "output_amounts": [
+      40.0,
+      9.998
+    ],
+    "fee": 0.001,
+    "pattern_type": "DORMANT_ACTIVATION"
+  },
+  {
+    "txid": "tx_entity_cluster_co_spend_0001_33333333333333333333333333333333333333",
+    "timestamp": "2026-01-21T11:00:00",
+    "input_addresses": [
+      "1ClusterA_HotWalletAddr1111111111111",
+      "1ClusterA_DesktopClientAddr222222222",
+      "1ClusterA_MobileWalletAddr3333333333"
+    ],
+    "output_addresses": [
+      "1ExchangeDepositBinanceGateway99999"
+    ],
+    "input_amounts": [
+      1.2,
+      0.8,
+      0.5
+    ],
+    "output_amounts": [
+      2.499
+    ],
+    "fee": 0.001,
+    "pattern_type": "COMMON_INPUT_CLUSTER"
+  }
+]
