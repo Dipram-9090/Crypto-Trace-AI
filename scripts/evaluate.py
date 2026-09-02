@@ -1,37 +1,33 @@
 """
-Model evaluation and benchmarking CLI script for CryptoTrace AI.
-Generates comprehensive comparative performance metrics and reports across all trained forensic models.
+CLI entry point for model benchmarking and evaluation.
 """
 import os
 import sys
 import argparse
 import pandas as pd
 import numpy as np
-import logging
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.models.xgboost_model import CryptoXGBoostClassifier
-from src.models.isolation_forest import CryptoIsolationForest
-from src.models.graphsage_model import CryptoGraphSAGE
-from src.models.baseline_models import BaselineEvaluator
-from src.graph.graph_builder import ForensicGraphBuilder
+from src.cryptotrace.models.xgboost_model import CryptoXGBoostClassifier
+from src.cryptotrace.models.isolation_forest import CryptoIsolationForest
+from src.cryptotrace.models.graphsage import CryptoGraphSAGE
+from src.cryptotrace.models.baseline_models import BaselineEvaluator
+from src.cryptotrace.graph.builder import ForensicGraphBuilder
+from src.cryptotrace.utils.logging import setup_logger
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, average_precision_score
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+logger = setup_logger("evaluate_cli")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate and compare CryptoTrace AI models on temporal test set.")
+    parser = argparse.ArgumentParser(description="Evaluate and compare models on temporal test split.")
     parser.add_argument("--features", type=str, default="data/processed/features.csv", help="Full features CSV path")
     parser.add_argument("--models_dir", type=str, default="models", help="Models directory")
-    parser.add_argument("--out_dir", type=str, default="reports", help="Reports output directory")
+    parser.add_argument("--out_dir", type=str, default="reports/metrics", help="Metrics output directory")
     args = parser.parse_args()
 
     os.makedirs(args.out_dir, exist_ok=True)
-
-    logger.info(f"Loading feature dataset from {args.features}...")
     df = pd.read_csv(args.features)
     df_sup = df[df["label"].isin([0, 1])].reset_index(drop=True)
 
@@ -53,17 +49,15 @@ def main():
 
     results = []
 
-    # 1. Baseline Models (Logistic Regression & Random Forest)
-    logger.info("Evaluating Baselines (Logistic Regression & Random Forest)...")
+    # Baselines
     baseline_eval = BaselineEvaluator(random_state=42)
-    baseline_df = baseline_eval.fit_and_evaluate(X_train, y_train, X_test, y_test)
-    for _, row in baseline_df.iterrows():
-        results.append(row.to_dict())
+    b_df = baseline_eval.fit_and_evaluate(X_train, y_train, X_test, y_test)
+    for _, r in b_df.iterrows():
+        results.append(r.to_dict())
 
-    # 2. XGBoost Evaluation
-    xgb_path = os.path.join(args.models_dir, "xgboost_model.pkl")
+    # XGBoost
+    xgb_path = os.path.join(args.models_dir, "xgboost", "xgboost_model.pkl")
     if os.path.exists(xgb_path):
-        logger.info("Evaluating XGBoost Classifier...")
         xgb_model = CryptoXGBoostClassifier.load(xgb_path)
         xgb_eval = xgb_model.evaluate(X_test, y_test)
         results.append({
@@ -77,10 +71,9 @@ def main():
             "Recall@100": xgb_eval.get("recall@100", 0.0)
         })
 
-    # 3. Isolation Forest Evaluation
-    if_path = os.path.join(args.models_dir, "isolation_forest.pkl")
+    # Isolation Forest
+    if_path = os.path.join(args.models_dir, "isolation_forest", "isolation_forest.pkl")
     if os.path.exists(if_path):
-        logger.info("Evaluating Isolation Forest Anomaly Detector...")
         if_model = CryptoIsolationForest.load(if_path)
         anom_scores = if_model.predict_anomaly_score(X_test)
         anom_preds = (anom_scores >= 60.0).astype(int)
@@ -93,10 +86,9 @@ def main():
             "ROC-AUC": round(float(roc_auc_score(y_test, anom_scores / 100.0)), 4)
         })
 
-    # 4. GraphSAGE Evaluation
-    gnn_path = os.path.join(args.models_dir, "graphsage.pt")
+    # GraphSAGE
+    gnn_path = os.path.join(args.models_dir, "graphsage", "graphsage.pt")
     if os.path.exists(gnn_path):
-        logger.info("Evaluating GraphSAGE GNN...")
         gnn_model = CryptoGraphSAGE.load(gnn_path)
         builder = ForensicGraphBuilder()
         G = builder.build_from_dataframe(df_sup)
@@ -118,16 +110,17 @@ def main():
             "ROC-AUC": round(float(roc_auc_score(y_test, test_probs)), 4)
         })
 
-    comparison_df = pd.DataFrame(results).fillna("-")
+    comp_df = pd.DataFrame(results).fillna("-")
     out_csv = os.path.join(args.out_dir, "model_comparison.csv")
-    comparison_df.to_csv(out_csv, index=False)
+    comp_df.to_csv(out_csv, index=False)
+    # Also save to reports/ for dashboard backward compatibility
+    comp_df.to_csv("reports/model_comparison.csv", index=False)
 
     print("\n" + "=" * 80)
     print("                    CRYPTOTRACE AI MODEL BENCHMARK REPORT")
     print("=" * 80)
-    print(comparison_df.to_string(index=False))
+    print(comp_df.to_string(index=False))
     print("=" * 80)
-    logger.info(f"Model comparison report saved to {out_csv}")
 
 
 if __name__ == "__main__":

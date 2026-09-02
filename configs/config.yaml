@@ -1,0 +1,49 @@
+project:
+  name: "CryptoTrace AI"
+  version: "1.0.0"
+  description: "Enterprise Multi-Modal Graph & ML Forensic Analytics for Suspicious Bitcoin Transactions"
+  seed: 42
+
+paths:
+  raw_data_dir: "data/raw"
+  interim_data_dir: "data/interim"
+  processed_data_dir: "data/processed"
+  synthetic_data_dir: "data/synthetic"
+  models_dir: "models"
+  reports_dir: "reports"
+  geoip_city_db: "data/external/geoip/GeoLite2-City.mmdb"
+  geoip_asn_db: "data/external/geoip/GeoLite2-ASN.mmdb"
+
+data_generation:
+  num_transactions: 12000
+  num_wallets: 1200
+  num_ips: 150
+  num_asns: 25
+  illicit_ratio: 0.08
+  seed: 42
+
+ingestion:
+  strict_validation: false
+  supported_formats: ["csv", "json", "xml"]
+  date_format: "%Y-%m-%d %H:%M:%S"
+
+risk_scoring:
+  weights:
+    ml_score: 0.50
+    anomaly_score: 0.20
+    graph_score: 0.20
+    behavioral_score: 0.10
+  thresholds:
+    low: [0, 30]
+    medium: [30, 60]
+    high: [60, 80]
+    critical: [80, 100]
+
+explainability:
+  top_k_features: 6
+  shap_sample_size: 500
+
+dashboard:
+  theme: "dark"
+  default_page: "Overview"
+  max_graph_nodes_display: 120

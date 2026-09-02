@@ -1,0 +1,42 @@
+[
+  {
+    "txid": "TX_TEST_001",
+    "timestamp": "2026-01-01 12:00:00",
+    "src_ip": "185.220.101.5",
+    "dst_ip": "51.15.89.2",
+    "src_port": 54321,
+    "dst_port": 8333,
+    "input_addresses": ["1BTCTEST001"],
+    "output_addresses": ["1BTCTEST002", "1BTCTEST003"],
+    "input_amounts": [2.5],
+    "output_amounts": [1.5, 0.99],
+    "fee": 0.01,
+    "script_type": "p2wpkh",
+    "src_country": "Netherlands",
+    "dst_country": "Germany",
+    "src_asn": "AS13335",
+    "dst_asn": "AS24940",
+    "label": 1,
+    "entity_type": "SUSPICIOUS_ACTOR"
+  },
+  {
+    "txid": "TX_TEST_002",
+    "timestamp": "2026-01-01 12:05:00",
+    "src_ip": "104.244.72.1",
+    "dst_ip": "51.15.89.2",
+    "src_port": 12345,
+    "dst_port": 8333,
+    "input_addresses": ["1BTCTEST004"],
+    "output_addresses": ["1BTCTEST005"],
+    "input_amounts": [0.5],
+    "output_amounts": [0.495],
+    "fee": 0.005,
+    "script_type": "p2pkh",
+    "src_country": "United States",
+    "dst_country": "Germany",
+    "src_asn": "AS16509",
+    "dst_asn": "AS24940",
+    "label": 0,
+    "entity_type": "NORMAL_USER"
+  }
+]

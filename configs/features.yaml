@@ -1,0 +1,18 @@
+# Feature engineering parameter specifications
+
+temporal:
+  velocity_windows_hours: [1, 6, 24, 168]
+  burst_threshold_seconds: 60
+
+network:
+  standard_btc_port: 8333
+  shared_infra_threshold: 5
+
+graph:
+  pagerank_alpha: 0.85
+  max_ego_hops: 3
+  max_neighbor_samples: 50
+
+scaling:
+  method: "robust" # robust or standard
+  clip_outliers: true
