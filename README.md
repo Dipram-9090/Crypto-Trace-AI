@@ -1,5 +1,12 @@
 <div align="center">
 
+<!-- Dual Theme Responsive Logos -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="logo%20images/logo-for-dark.jpeg">
+  <source media="(prefers-color-scheme: light)" srcset="logo%20images/logo-for-white.jpeg">
+  <img alt="CryptoTrace AI Logo" src="logo%20images/logo-for-white.jpeg" width="350">
+</picture>
+
 # 🛡️ CryptoTrace AI
 ### Enterprise Multi-Modal Graph & Machine Learning Forensic Analytics for Bitcoin
 
