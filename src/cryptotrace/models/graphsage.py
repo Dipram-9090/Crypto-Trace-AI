@@ -1,36 +1,48 @@
 """
 Graph Neural Network (GraphSAGE) model.
+Safe offline implementation with lazy PyTorch dependency.
 """
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+try:
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    HAS_TORCH = True
+except ImportError:
+    torch = None
+    nn = None
+    F = None
+    HAS_TORCH = False
+
 import numpy as np
 import networkx as nx
 from typing import Dict, Any, List, Optional
 
 
-class SAGEConvLayer(nn.Module):
-    def __init__(self, in_features: int, out_features: int, bias: bool = True):
-        super(SAGEConvLayer, self).__init__()
-        self.linear_self = nn.Linear(in_features, out_features, bias=bias)
-        self.linear_neigh = nn.Linear(in_features, out_features, bias=False)
+if HAS_TORCH:
+    class SAGEConvLayer(nn.Module):
+        def __init__(self, in_features: int, out_features: int, bias: bool = True):
+            super(SAGEConvLayer, self).__init__()
+            self.linear_self = nn.Linear(in_features, out_features, bias=bias)
+            self.linear_neigh = nn.Linear(in_features, out_features, bias=False)
 
-    def forward(self, x: torch.Tensor, adj_norm: torch.Tensor) -> torch.Tensor:
-        neigh = torch.matmul(adj_norm, x)
-        return self.linear_self(x) + self.linear_neigh(neigh)
+        def forward(self, x: torch.Tensor, adj_norm: torch.Tensor) -> torch.Tensor:
+            neigh = torch.matmul(adj_norm, x)
+            return self.linear_self(x) + self.linear_neigh(neigh)
 
+    class GraphSAGENet(nn.Module):
+        def __init__(self, in_channels: int, hidden_channels: int = 64, out_channels: int = 2, dropout: float = 0.2):
+            super(GraphSAGENet, self).__init__()
+            self.conv1 = SAGEConvLayer(in_channels, hidden_channels)
+            self.conv2 = SAGEConvLayer(hidden_channels, out_channels)
+            self.dropout = nn.Dropout(dropout)
 
-class GraphSAGENet(nn.Module):
-    def __init__(self, in_channels: int, hidden_channels: int = 64, out_channels: int = 2, dropout: float = 0.2):
-        super(GraphSAGENet, self).__init__()
-        self.conv1 = SAGEConvLayer(in_channels, hidden_channels)
-        self.conv2 = SAGEConvLayer(hidden_channels, out_channels)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, x: torch.Tensor, adj_norm: torch.Tensor) -> torch.Tensor:
-        h = F.relu(self.conv1(x, adj_norm))
-        h = self.dropout(h)
-        return self.conv2(h, adj_norm)
+        def forward(self, x: torch.Tensor, adj_norm: torch.Tensor) -> torch.Tensor:
+            h = F.relu(self.conv1(x, adj_norm))
+            h = self.dropout(h)
+            return self.conv2(h, adj_norm)
+else:
+    class GraphSAGENet:
+        pass
 
 
 class CryptoGraphSAGE:
@@ -54,7 +66,9 @@ class CryptoGraphSAGE:
         self.model = None
         self.is_trained = False
 
-    def _build_adj_matrix(self, G: nx.DiGraph, node_list: List[str]) -> torch.Tensor:
+    def _build_adj_matrix(self, G: nx.DiGraph, node_list: List[str]):
+        if not HAS_TORCH:
+            return None
         node_to_idx = {n: i for i, n in enumerate(node_list)}
         N = len(node_list)
         adj = np.zeros((N, N), dtype=np.float32)
@@ -79,6 +93,9 @@ class CryptoGraphSAGE:
         train_mask: np.ndarray,
         val_mask: Optional[np.ndarray] = None
     ) -> Dict[str, Any]:
+        if not HAS_TORCH:
+            return {"status": "skipped", "reason": "PyTorch not installed in environment"}
+
         self.in_channels = features.shape[1]
         self.model = GraphSAGENet(self.in_channels, self.hidden_channels, self.out_channels, self.dropout)
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=5e-4)
@@ -90,6 +107,7 @@ class CryptoGraphSAGE:
         t_mask = torch.tensor(train_mask, dtype=torch.bool)
 
         self.model.train()
+        loss = torch.tensor(0.0)
         for epoch in range(self.epochs):
             optimizer.zero_grad()
             logits = self.model(x, adj_norm)
@@ -101,7 +119,7 @@ class CryptoGraphSAGE:
         return {"final_loss": float(loss.item())}
 
     def predict_proba(self, G: nx.DiGraph, node_list: List[str], features: np.ndarray) -> np.ndarray:
-        if not self.is_trained or self.model is None:
+        if not HAS_TORCH or not self.is_trained or self.model is None:
             return np.zeros(len(node_list), dtype=np.float32)
 
         self.model.eval()
@@ -114,7 +132,7 @@ class CryptoGraphSAGE:
         return probs
 
     def save(self, filepath: str):
-        if self.model is not None:
+        if HAS_TORCH and self.model is not None:
             torch.save({
                 "state_dict": self.model.state_dict(),
                 "in_channels": self.in_channels,
@@ -125,6 +143,8 @@ class CryptoGraphSAGE:
 
     @classmethod
     def load(cls, filepath: str) -> "CryptoGraphSAGE":
+        if not HAS_TORCH:
+            return cls()
         ckpt = torch.load(filepath, map_location="cpu")
         obj = cls(
             in_channels=ckpt["in_channels"],

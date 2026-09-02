@@ -1,31 +1,66 @@
-# ⛓️ Bitcoin Blockchain Layer & UTXO Analysis
+# CryptoTrace AI — Bitcoin Protocol & Blockchain Engine Documentation
 
-CryptoTrace AI treats the Bitcoin blockchain as a directional, multi-input, multi-output value transfer graph.
-
-## 1. UTXO Transaction Model
-
-Unlike account-based ledgers (e.g., Ethereum), Bitcoin transactions consume previously unspent transaction outputs (**UTXOs**) and produce new UTXOs:
-- **Inputs ($\text{vin}$)**: References to previous transaction hashes (`txid`) and output indices (`vout`).
-- **Outputs ($\text{vout}$)**: Value amounts in BTC / satoshis coupled with locking script public keys (`scriptPubKey`).
-- **Miner Fee**: Implicitly calculated as $\text{Fee} = \sum \text{Inputs} - \sum \text{Outputs}$.
+## Overview
+CryptoTrace AI implements a production-grade, modular, offline-first Bitcoin transaction forensics engine designed for law enforcement, blockchain analysts, and cybercrime investigation units.
 
 ---
 
-## 2. Supported Script Encodings
+## 1. Bitcoin Protocol Support
 
-| Script Type | Standard Prefix | Description | Forensic Significance |
-| :--- | :--- | :--- | :--- |
-| **P2PKH** | `1...` | Pay-to-PubKey-Hash (Legacy Base58Check) | Standard legacy transfers |
-| **P2SH** | `3...` | Pay-to-Script-Hash | Multisig / Escrows / Mixers |
-| **P2WPKH** | `bc1q...` | Native SegWit v0 (Bech32) | Modern exchange & user wallets |
-| **P2WSH** | `bc1q...` (62 chars) | SegWit Script Hash | Complex institutional multisig |
-| **P2TR** | `bc1p...` | Taproot v1 (Bech32m, Schnorr) | Privacy-enhanced spending |
+### Transaction Models & Inputs/Outputs
+- **`BitcoinTransaction`**: Full transaction abstraction encapsulating `txid`, `version`, `locktime`, `vsize`, `fee`, `fee_rate` (sat/vB), `timestamp`, `block_height`, and collections of `TxInput` and `TxOutput`.
+- **`TxInput` (vin)**: Tracks previous outpoint reference (`prev_txid:vout`), signature script (`script_sig`), sequence number, witness items, and input address attribution.
+- **`TxOutput` (vout)**: Tracks destination address, transfer value in BTC / satoshis, `scriptPubKey` bytecode, script type classification, `OP_RETURN` payload parsing, and change address indicators.
+
+### Script Types & Opcode Classification
+The engine inspects and classifies Bitcoin script types without external network services:
+- **P2PKH (Pay-to-Public-Key-Hash)**: Standard legacy scripts (`OP_DUP OP_HASH160 <pubKeyHash> OP_EQUALVERIFY OP_CHECKSIG`).
+- **P2SH (Pay-to-Script-Hash)**: Script hash outputs (`OP_HASH160 <scriptHash> OP_EQUAL`).
+- **P2WPKH (Native SegWit v0)**: 20-byte witness public key hashes (`bc1q...`).
+- **P2WSH (Native SegWit v0 Script)**: 32-byte witness script hashes.
+- **P2TR (Taproot BIP 341/342)**: 32-byte witness v1 outputs (`bc1p...`).
+- **OP_RETURN**: Metadata outputs; safely extracts string and hex payloads without throwing exceptions.
+- **Multisig**: Standard `m-of-n` multisig patterns (`OP_CHECKMULTISIG`).
+
+### Address Validation & Classification
+- **Base58Check**: Offline double-SHA256 checksum verification for Legacy (`1...`), Script (`3...`), and Testnet (`m...`, `n...`, `2...`) addresses.
+- **Bech32 & Bech32m**: Polymod checksum verification according to BIP 173 and BIP 350.
 
 ---
 
-## 3. Heuristic Clustering Principles
+## 2. UTXO Ledger & Fee Engine (`UTXOSet`)
 
-1. **Common-Input-Ownership (Multi-Input Heuristic)**:
-   If a transaction has multiple inputs $[w_1, w_2, \dots, w_k]$, all signing addresses are presumed to be controlled by the same wallet entity.
-2. **Peeling Chain Detection**:
-   Successive single-input, two-output transactions where one output is a large whole amount and the other is a small change amount transferred in quick succession.
+The in-memory UTXO engine maintains:
+- **Outpoint Tracking**: Keyed by `txid:vout`.
+- **Spending Lifecycle**: Marks outpoints as spent when referenced by subsequent transaction inputs, logging `spent_in_txid` and `spent_at`.
+- **Double-Spend Detection**: Automatically flags and logs any outpoint referenced for spending more than once.
+- **Balance Calculation**: Accurately aggregates unspent output balances per address across blocks.
+- **Fee Calculation**: Calculates `fee = total_input_amount - total_output_amount` when historical inputs are present in the dataset.
+
+---
+
+## 3. Schema Normalization & Offline Ingestion
+
+Heterogeneous datasets (CSV, JSON, JSONL, Parquet) with varied column naming conventions are automatically mapped:
+- `txid` / `transaction_id` / `hash` -> `txid`
+- `from_address` / `sender` / `input_address` / `vin` -> `input_addresses`
+- `to_address` / `receiver` / `output_address` / `vout` -> `output_addresses`
+- `amount` / `value` / `output_amounts` -> `output_amounts`
+- `fee` / `tx_fee` -> `fee`
+- `timestamp` / `date` / `block_time` -> `timestamp`
+
+Every ingestion produces a `DatasetValidationReport` detailing total records, valid/invalid records, duplicates, detected schema mappings, and dataset isolation ID (`dataset_id`).
+
+---
+
+## 4. Bitcoin Core JSON-RPC Adapter
+
+Configured via environment variables:
+```bash
+BITCOIN_RPC_HOST=127.0.0.1
+BITCOIN_RPC_PORT=8332
+BITCOIN_RPC_USER=rpcuser
+BITCOIN_RPC_PASSWORD=rpcpassword
+BITCOIN_RPC_ENABLED=false
+```
+When Bitcoin Core is offline or unreachable, the client safely falls back to offline dataset mode without hanging or crashing.

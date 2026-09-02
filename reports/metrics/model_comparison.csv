@@ -1,4 +1,4 @@
 Model,Precision,Recall,F1-Score,PR-AUC,ROC-AUC,Precision@100,Recall@100
 Logistic Regression (Baseline),0.2667,0.8062,0.4008,0.4449,0.8994,,
-Random Forest (Baseline),0.9921,0.969,0.9804,0.9967,0.9997,,
+Random Forest (Baseline),0.9843,0.969,0.9766,0.9973,0.9998,,
 XGBoost (Primary Classifier),0.9921,0.9767,0.9844,0.9985,0.9999,1.0,0.7752

@@ -1,11 +1,18 @@
 """
 SHAP model explainability engine.
+Safe offline implementation with lazy fallback if shap is not installed.
 """
 
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, List
-import shap
+try:
+    import shap
+    HAS_SHAP = True
+except ImportError:
+    shap = None
+    HAS_SHAP = False
+
 from src.cryptotrace.utils.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -35,7 +42,7 @@ FEATURE_EXPLANATIONS = {
 
 
 class CryptoSHAPExplainer:
-    """SHAP-based decision attribution engine."""
+    """SHAP-based decision attribution engine with offline statistical fallback."""
 
     def __init__(self, model: Any, feature_names: List[str]):
         self.model = getattr(model, "model", model)
@@ -44,6 +51,9 @@ class CryptoSHAPExplainer:
         self._init_explainer()
 
     def _init_explainer(self):
+        if not HAS_SHAP or self.model is None:
+            self.explainer = None
+            return
         try:
             self.explainer = shap.TreeExplainer(self.model)
         except Exception:
