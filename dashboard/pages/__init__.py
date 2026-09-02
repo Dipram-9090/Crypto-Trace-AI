@@ -6,7 +6,9 @@ from dashboard.pages import (
     network_graph,
     geo_analysis,
     shap_explainability,
-    model_benchmarks
+    model_benchmarks,
+    behavioral_clustering,
+    duckdb_analytics
 )
 
 __all__ = [
@@ -17,5 +19,7 @@ __all__ = [
     "network_graph",
     "geo_analysis",
     "shap_explainability",
-    "model_benchmarks"
+    "model_benchmarks",
+    "behavioral_clustering",
+    "duckdb_analytics"
 ]

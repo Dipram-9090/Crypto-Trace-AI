@@ -1,5 +1,6 @@
 """
-End-to-end training pipeline for CryptoTrace AI.
+End-to-end multi-dataset training pipeline for CryptoTrace AI.
+Trains XGBoost, Isolation Forest, GraphSAGE, Behavioral Clustering, and BitcoinHeist Ransomware models.
 """
 import os
 import pandas as pd
@@ -7,7 +8,11 @@ import numpy as np
 from src.cryptotrace.models.xgboost_model import CryptoXGBoostClassifier
 from src.cryptotrace.models.isolation_forest import CryptoIsolationForest
 from src.cryptotrace.models.graphsage import CryptoGraphSAGE
+from src.cryptotrace.models.clustering import BehavioralClusterer
+from src.cryptotrace.models.ransomware_model import RansomwareClassifier
 from src.cryptotrace.graph.builder import ForensicGraphBuilder
+from src.cryptotrace.ingestion.bitcoinheist import BitcoinHeistLoader
+from src.cryptotrace.storage.parquet_io import write_parquet
 from src.cryptotrace.utils.io import load_yaml
 from src.cryptotrace.utils.logging import setup_logger
 
@@ -19,14 +24,19 @@ def run_training_pipeline(
     config_yaml: str = "configs/model.yaml",
     models_dir: str = "models"
 ):
-    """Executes chronological split, model fitting, and artifact serialization."""
+    """Executes chronological split, multi-model fitting, and artifact serialization."""
     os.makedirs(os.path.join(models_dir, "xgboost"), exist_ok=True)
     os.makedirs(os.path.join(models_dir, "isolation_forest"), exist_ok=True)
     os.makedirs(os.path.join(models_dir, "graphsage"), exist_ok=True)
+    os.makedirs(os.path.join(models_dir, "clustering"), exist_ok=True)
+    os.makedirs(os.path.join(models_dir, "ransomware"), exist_ok=True)
 
     cfg = load_yaml(config_yaml)
     logger.info(f"Loading features from {features_csv}...")
     df = pd.read_csv(features_csv)
+
+    # Save to Parquet format
+    write_parquet(df, "data/processed/features.parquet")
 
     meta_cols = ["txid", "timestamp", "datetime", "src_ip", "dst_ip", "primary_wallet", "src_country", "src_asn", "label", "entity_type"]
     feature_cols = [c for c in df.columns if c not in meta_cols]
@@ -47,7 +57,7 @@ def run_training_pipeline(
     X_val = val_df[feature_cols].fillna(0.0)
     y_val = val_df["label"].astype(int)
 
-    # 1. XGBoost
+    # 1. XGBoost Primary Classifier
     logger.info("Fitting XGBoost Classifier...")
     xgb_cfg = cfg.get("xgboost", {})
     xgb_model = CryptoXGBoostClassifier(
@@ -60,7 +70,7 @@ def run_training_pipeline(
     xgb_model.train(X_train, y_train, X_val, y_val)
     xgb_model.save(os.path.join(models_dir, "xgboost", "xgboost_model.pkl"))
 
-    # 2. Isolation Forest
+    # 2. Isolation Forest Anomaly Detection
     logger.info("Fitting Isolation Forest...")
     if_cfg = cfg.get("isolation_forest", {})
     if_model = CryptoIsolationForest(
@@ -71,7 +81,7 @@ def run_training_pipeline(
     if_model.train(X_train)
     if_model.save(os.path.join(models_dir, "isolation_forest", "isolation_forest.pkl"))
 
-    # 3. GraphSAGE
+    # 3. GraphSAGE Inductive GNN
     logger.info("Fitting GraphSAGE GNN...")
     builder = ForensicGraphBuilder()
     G = builder.build_from_dataframe(df_sup)
@@ -93,6 +103,21 @@ def run_training_pipeline(
     gnn_model.train(G, node_list, features_mat, labels_arr, train_mask)
     gnn_model.save(os.path.join(models_dir, "graphsage", "graphsage.pt"))
 
+    # 4. Behavioral Entity Clusterer (DBSCAN + PCA)
+    logger.info("Fitting Behavioral Clusterer (DBSCAN & PCA)...")
+    clusterer = BehavioralClusterer(eps=1.5, min_samples=5)
+    clusterer.fit_predict(X_train)
+    clusterer.save(os.path.join(models_dir, "clustering", "behavioral_clusterer.pkl"))
+
+    # 5. BitcoinHeist Ransomware Classifier
+    logger.info("Training BitcoinHeist Ransomware Classifier...")
+    heist_loader = BitcoinHeistLoader()
+    df_heist = heist_loader.load()
+    rw_model = RansomwareClassifier(n_estimators=120, max_depth=5)
+    rw_model.train(df_heist)
+    rw_model.save(os.path.join(models_dir, "ransomware", "ransomware_model.pkl"))
+
     # Save test partition
     test_df.to_csv("data/processed/test_features.csv", index=False)
-    logger.info("Training pipeline completed successfully.")
+    write_parquet(test_df, "data/processed/test_features.parquet")
+    logger.info("All 5 multi-dataset models trained and serialized successfully.")

@@ -34,6 +34,14 @@ wheels/
 htmlcov/
 .ipynb_checkpoints/
 
+# Raw and Large Datasets
+data/raw/*
+!data/raw/**/.gitkeep
+data/external/geoip/*.mmdb
+!data/external/geoip/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+
 # IDE
 .vscode/
 .idea/
@@ -43,3 +51,4 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+

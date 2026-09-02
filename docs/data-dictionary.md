@@ -1,10 +1,22 @@
-# 📖 CryptoTrace AI Data Dictionary
+# 📖 CryptoTrace AI Multi-Dataset Data Dictionary
 
-This document specifies the canonical schema fields, data types, and engineered feature definitions.
+This document specifies the canonical schema fields, public dataset mappings (Elliptic, Elliptic++, BitcoinHeist, GeoLite2), synthetic network telemetry, and storage format specifications.
 
 ---
 
-## 1. Raw & Ingested Transaction Schema
+## 1. Multi-Dataset Architecture Overview
+
+| Dataset | Format / Location | Role & Application | Primary Model |
+| :--- | :--- | :--- | :--- |
+| **Elliptic Bitcoin Dataset** | CSV (`data/raw/elliptic/`) | Illicit / Licit transaction node classification | Supervised XGBoost, Random Forest |
+| **Elliptic++** | CSV (`data/raw/ellipticpp/`) | Dual Wallet & Transaction graph analytics | GraphSAGE GNN, PageRank, Degree Centrality |
+| **BitcoinHeist** | CSV (`data/raw/bitcoinheist/`) | Address-level ransomware detection | Ransomware XGBoost Classifier |
+| **GeoLite2 (MaxMind)** | MMDB/CSV (`data/external/geoip/`) | IP-to-Country and IP-to-ASN network enrichment | Deterministic GeoIP & Proxy Resolver |
+| **CryptoTrace Synthetic Network** | CSV/Parquet (`data/synthetic/`) | IP/port/timing P2P network telemetry bridge | Isolation Forest, Behavioral Clusterer |
+
+---
+
+## 2. Canonical Transaction Schema (Network + Blockchain Unified)
 
 | Field Name | Type | Description | Example |
 | :--- | :--- | :--- | :--- |
@@ -27,17 +39,22 @@ This document specifies the canonical schema fields, data types, and engineered 
 
 ---
 
-## 2. Engineered Feature Taxonomy
+## 3. BitcoinHeist Ransomware Feature Schema
 
-| Feature | Category | Description |
+| Field | Type | Description |
 | :--- | :--- | :--- |
-| `fan_out_ratio` | Transaction | Ratio of output count to input count |
-| `output_entropy` | Transaction | Shannon entropy across output value distribution |
-| `output_amount_variance`| Transaction | Variance of output slices (peeling indicator) |
-| `wallet_txs_last_1h` | Temporal | Count of transactions from wallet in past 1 hour |
-| `wallet_txs_last_24h` | Temporal | Count of transactions from wallet in past 24 hours |
-| `burst_score` | Temporal | Indicator of rapid-fire sub-minute transactions |
-| `shared_infrastructure_indicator` | Network | Index of distinct wallets collocated on single IP |
-| `wallet_unique_ips_count` | Network | Count of distinct IP hops utilized by wallet |
-| `graph_pagerank` | Graph | Centrality score in heterogeneous transaction graph |
-| `graph_2hop_neighbors` | Graph | Size of 2-hop neighborhood in network |
+| `address` | `string` | Bitcoin address identifier |
+| `length` | `integer` | Length of transaction chain from address |
+| `weight` | `float` | Fractional transaction output weight |
+| `count` | `integer` | Number of distinct transaction inputs/outputs |
+| `looped` | `integer` | Number of cyclic loops back to address |
+| `neighbors` | `integer` | Degree / neighbor count in address subgraph |
+| `income` | `float` | Total satoshis transacted through address |
+| `is_ransomware`| `integer` | Binary indicator (1: Ransomware family, 0: Licit/White) |
+
+---
+
+## 4. Storage & Query Optimization
+
+- **Columnar Compressed Parquet (`data/processed/*.parquet`)**: High-throughput storage using Snappy compression with PyArrow and Polars engines for 10x faster analytical reads.
+- **DuckDB Analytical Views**: Zero-copy in-memory SQL execution engine for sub-second wallet aggregation, infrastructure concentration analysis, and complex window operations.

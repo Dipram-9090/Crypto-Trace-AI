@@ -1,5 +1,5 @@
 """
-CLI entry point for model benchmarking and evaluation.
+CLI entry point for multi-dataset model benchmarking and evaluation.
 """
 import os
 import sys
@@ -13,7 +13,10 @@ from src.cryptotrace.models.xgboost_model import CryptoXGBoostClassifier
 from src.cryptotrace.models.isolation_forest import CryptoIsolationForest
 from src.cryptotrace.models.graphsage import CryptoGraphSAGE
 from src.cryptotrace.models.baseline_models import BaselineEvaluator
+from src.cryptotrace.models.ransomware_model import RansomwareClassifier
 from src.cryptotrace.graph.builder import ForensicGraphBuilder
+from src.cryptotrace.ingestion.bitcoinheist import BitcoinHeistLoader
+from src.cryptotrace.storage.parquet_io import write_parquet
 from src.cryptotrace.utils.logging import setup_logger
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, average_precision_score
 
@@ -21,7 +24,7 @@ logger = setup_logger("evaluate_cli")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate and compare models on temporal test split.")
+    parser = argparse.ArgumentParser(description="Evaluate and compare all models on temporal test splits.")
     parser.add_argument("--features", type=str, default="data/processed/features.csv", help="Full features CSV path")
     parser.add_argument("--models_dir", type=str, default="models", help="Models directory")
     parser.add_argument("--out_dir", type=str, default="reports/metrics", help="Metrics output directory")
@@ -49,13 +52,13 @@ def main():
 
     results = []
 
-    # Baselines
+    # 1. Baselines (Logistic Regression & Random Forest)
     baseline_eval = BaselineEvaluator(random_state=42)
     b_df = baseline_eval.fit_and_evaluate(X_train, y_train, X_test, y_test)
     for _, r in b_df.iterrows():
         results.append(r.to_dict())
 
-    # XGBoost
+    # 2. XGBoost Primary Classifier
     xgb_path = os.path.join(args.models_dir, "xgboost", "xgboost_model.pkl")
     if os.path.exists(xgb_path):
         xgb_model = CryptoXGBoostClassifier.load(xgb_path)
@@ -71,7 +74,7 @@ def main():
             "Recall@100": xgb_eval.get("recall@100", 0.0)
         })
 
-    # Isolation Forest
+    # 3. Isolation Forest
     if_path = os.path.join(args.models_dir, "isolation_forest", "isolation_forest.pkl")
     if os.path.exists(if_path):
         if_model = CryptoIsolationForest.load(if_path)
@@ -86,7 +89,7 @@ def main():
             "ROC-AUC": round(float(roc_auc_score(y_test, anom_scores / 100.0)), 4)
         })
 
-    # GraphSAGE
+    # 4. GraphSAGE Inductive GNN
     gnn_path = os.path.join(args.models_dir, "graphsage", "graphsage.pt")
     if os.path.exists(gnn_path):
         gnn_model = CryptoGraphSAGE.load(gnn_path)
@@ -110,17 +113,36 @@ def main():
             "ROC-AUC": round(float(roc_auc_score(y_test, test_probs)), 4)
         })
 
-    comp_df = pd.DataFrame(results).fillna("-")
+    # 5. BitcoinHeist Ransomware Classifier
+    rw_path = os.path.join(args.models_dir, "ransomware", "ransomware_model.pkl")
+    if os.path.exists(rw_path):
+        rw_model = RansomwareClassifier.load(rw_path)
+        df_heist = BitcoinHeistLoader().load()
+        feat_cols = ["length", "weight", "count", "looped", "neighbors", "income"]
+        probs_rw = rw_model.predict_ransomware_prob(df_heist[feat_cols])
+        preds_rw = (probs_rw >= 0.5).astype(int)
+        y_rw = df_heist["is_ransomware"].to_numpy()
+
+        results.append({
+            "Model": "BitcoinHeist Ransomware XGBoost",
+            "Precision": round(float(precision_score(y_rw, preds_rw, zero_division=0)), 4),
+            "Recall": round(float(recall_score(y_rw, preds_rw, zero_division=0)), 4),
+            "F1-Score": round(float(f1_score(y_rw, preds_rw, zero_division=0)), 4),
+            "PR-AUC": round(float(average_precision_score(y_rw, probs_rw)), 4),
+            "ROC-AUC": round(float(roc_auc_score(y_rw, probs_rw)), 4)
+        })
+
+    comp_df = pd.DataFrame(results)
     out_csv = os.path.join(args.out_dir, "model_comparison.csv")
     comp_df.to_csv(out_csv, index=False)
-    # Also save to reports/ for dashboard backward compatibility
     comp_df.to_csv("reports/model_comparison.csv", index=False)
+    write_parquet(comp_df.astype(str), os.path.join(args.out_dir, "model_comparison.parquet"))
 
-    print("\n" + "=" * 80)
-    print("                    CRYPTOTRACE AI MODEL BENCHMARK REPORT")
-    print("=" * 80)
+    print("\n" + "=" * 85)
+    print("                    CRYPTOTRACE AI MULTI-DATASET MODEL BENCHMARK")
+    print("=" * 85)
     print(comp_df.to_string(index=False))
-    print("=" * 80)
+    print("=" * 85)
 
 
 if __name__ == "__main__":
