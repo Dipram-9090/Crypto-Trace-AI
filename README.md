@@ -2,9 +2,9 @@
 
 <!-- Dual Theme Responsive Logos -->
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="logo%20images/logo-for-dark.jpeg">
-  <source media="(prefers-color-scheme: light)" srcset="logo%20images/logo-for-white.jpeg">
-  <img alt="CryptoTrace AI Logo" src="logo%20images/logo-for-white.jpeg" width="350">
+  <source media="(prefers-color-scheme: dark)" srcset="public/logo/light-horizontal-logo.svg">
+  <source media="(prefers-color-scheme: light)" srcset="public/logo/dark-horizontal-logo.svg">
+  <img alt="CryptoTrace AI Logo" src="public/logo/dark-horizontal-logo.svg" width="480">
 </picture>
 
 # 🛡️ CryptoTrace AI
