@@ -7,7 +7,6 @@
   <img alt="CryptoTrace AI Logo" src="public/logo/dark-horizontal-logo.svg" width="480">
 </picture>
 
-# 🛡️ CryptoTrace AI
 ### Enterprise Multi-Modal Graph & Machine Learning Forensic Analytics for Bitcoin
 
 [![CI Pipeline](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI/actions)
