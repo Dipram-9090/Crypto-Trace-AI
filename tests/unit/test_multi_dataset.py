@@ -1,6 +1,7 @@
 """
 Unit tests for Elliptic, Elliptic++, BitcoinHeist, and NetworkBridge loaders.
 """
+
 from src.cryptotrace.ingestion.elliptic import EllipticDatasetLoader
 from src.cryptotrace.ingestion.ellipticpp import EllipticPlusPlusLoader
 from src.cryptotrace.ingestion.bitcoinheist import BitcoinHeistLoader

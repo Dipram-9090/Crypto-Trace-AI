@@ -1,6 +1,7 @@
 """
 Elliptic++ Extended Graph & Wallet Ingestion Loader.
 """
+
 import os
 import pandas as pd
 import numpy as np
@@ -12,6 +13,7 @@ logger = setup_logger(__name__)
 
 class EllipticPlusPlusLoader:
     """Loads Elliptic++ dual transaction and wallet/actor graphs."""
+
     def __init__(self, data_dir: str = "data/raw/ellipticpp"):
         self.data_dir = data_dir
         self.txs_features_file = os.path.join(data_dir, "txs_features.csv")
@@ -42,7 +44,7 @@ class EllipticPlusPlusLoader:
             "wallets": wallets_df,
             "addr_tx": addr_tx,
             "tx_addr": tx_addr,
-            "addr_addr": addr_addr
+            "addr_addr": addr_addr,
         }
 
     def _generate_sample_ellipticpp(self, n_tx: int = 300, n_wallets: int = 150) -> Dict[str, pd.DataFrame]:
@@ -50,41 +52,41 @@ class EllipticPlusPlusLoader:
         tx_ids = [f"EPP_TX_{i:05d}" for i in range(n_tx)]
         wallet_ids = [f"EPP_WALLET_{i:04d}" for i in range(n_wallets)]
 
-        tx_df = pd.DataFrame({
-            "txId": tx_ids,
-            "time_step": np.random.randint(1, 50, size=n_tx),
-            "label": np.random.choice([0, 1, 2], size=n_tx, p=[0.75, 0.10, 0.15]),
-            **{f"feat_{i}": np.random.randn(n_tx) for i in range(1, 30)}
-        })
+        tx_df = pd.DataFrame(
+            {
+                "txId": tx_ids,
+                "time_step": np.random.randint(1, 50, size=n_tx),
+                "label": np.random.choice([0, 1, 2], size=n_tx, p=[0.75, 0.10, 0.15]),
+                **{f"feat_{i}": np.random.randn(n_tx) for i in range(1, 30)},
+            }
+        )
 
-        wallet_df = pd.DataFrame({
-            "address": wallet_ids,
-            "label": np.random.choice([0, 1, 2], size=n_wallets, p=[0.80, 0.08, 0.12]),
-            "degree": np.random.randint(1, 25, size=n_wallets),
-            "total_sent_btc": np.random.exponential(2.5, size=n_wallets),
-            "total_recv_btc": np.random.exponential(2.8, size=n_wallets),
-            **{f"wallet_feat_{i}": np.random.randn(n_wallets) for i in range(1, 15)}
-        })
+        wallet_df = pd.DataFrame(
+            {
+                "address": wallet_ids,
+                "label": np.random.choice([0, 1, 2], size=n_wallets, p=[0.80, 0.08, 0.12]),
+                "degree": np.random.randint(1, 25, size=n_wallets),
+                "total_sent_btc": np.random.exponential(2.5, size=n_wallets),
+                "total_recv_btc": np.random.exponential(2.8, size=n_wallets),
+                **{f"wallet_feat_{i}": np.random.randn(n_wallets) for i in range(1, 15)},
+            }
+        )
 
-        addr_tx = pd.DataFrame({
-            "address": np.random.choice(wallet_ids, size=n_tx),
-            "txId": tx_ids
-        })
+        addr_tx = pd.DataFrame({"address": np.random.choice(wallet_ids, size=n_tx), "txId": tx_ids})
 
-        tx_addr = pd.DataFrame({
-            "txId": tx_ids,
-            "address": np.random.choice(wallet_ids, size=n_tx)
-        })
+        tx_addr = pd.DataFrame({"txId": tx_ids, "address": np.random.choice(wallet_ids, size=n_tx)})
 
-        addr_addr = pd.DataFrame({
-            "input_address": np.random.choice(wallet_ids, size=n_tx // 2),
-            "output_address": np.random.choice(wallet_ids, size=n_tx // 2)
-        })
+        addr_addr = pd.DataFrame(
+            {
+                "input_address": np.random.choice(wallet_ids, size=n_tx // 2),
+                "output_address": np.random.choice(wallet_ids, size=n_tx // 2),
+            }
+        )
 
         return {
             "transactions": tx_df,
             "wallets": wallet_df,
             "addr_tx": addr_tx,
             "tx_addr": tx_addr,
-            "addr_addr": addr_addr
+            "addr_addr": addr_addr,
         }

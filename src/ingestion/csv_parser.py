@@ -1,14 +1,11 @@
 """
 CSV ingestion parser for CryptoTrace AI transaction metadata.
 """
+
 import pandas as pd
 from typing import Tuple, Dict, Any
 import logging
-from src.ingestion.canonical_schema import (
-    IngestionReport,
-    validate_transaction_record,
-    parse_list_field
-)
+from src.ingestion.canonical_schema import IngestionReport, validate_transaction_record, parse_list_field
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +44,18 @@ def parse_csv(filepath: str) -> Tuple[pd.DataFrame, IngestionReport]:
         # Parse list fields
         rec["input_addresses"] = parse_list_field(rec.get("input_addresses", []))
         rec["output_addresses"] = parse_list_field(rec.get("output_addresses", []))
-        rec["input_amounts"] = [float(x) for x in parse_list_field(rec.get("input_amounts", [0.0])) if str(x).replace('.', '', 1).isdigit() or (str(x).startswith('-') and str(x)[1:].replace('.', '', 1).isdigit())] or [0.0]
-        rec["output_amounts"] = [float(x) for x in parse_list_field(rec.get("output_amounts", [0.0])) if str(x).replace('.', '', 1).isdigit() or (str(x).startswith('-') and str(x)[1:].replace('.', '', 1).isdigit())] or [0.0]
+        rec["input_amounts"] = [
+            float(x)
+            for x in parse_list_field(rec.get("input_amounts", [0.0]))
+            if str(x).replace(".", "", 1).isdigit()
+            or (str(x).startswith("-") and str(x)[1:].replace(".", "", 1).isdigit())
+        ] or [0.0]
+        rec["output_amounts"] = [
+            float(x)
+            for x in parse_list_field(rec.get("output_amounts", [0.0]))
+            if str(x).replace(".", "", 1).isdigit()
+            or (str(x).startswith("-") and str(x)[1:].replace(".", "", 1).isdigit())
+        ] or [0.0]
 
         try:
             rec["fee"] = float(rec.get("fee", 0.0))

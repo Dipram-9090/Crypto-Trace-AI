@@ -1,6 +1,7 @@
 """
 Graph Node and Edge Schema Definitions.
 """
+
 from enum import Enum
 
 

@@ -1,6 +1,7 @@
 """
 End-to-end Multi-modal Feature Builder Pipeline.
 """
+
 import pandas as pd
 from typing import Dict, Any, List, Optional
 import networkx as nx
@@ -13,6 +14,7 @@ from src.cryptotrace.features.graph import GraphFeatureExtractor
 
 class FeatureBuilder:
     """Orchestrates transaction, wallet, temporal, network, and graph feature computation."""
+
     def __init__(self, G: Optional[nx.DiGraph] = None):
         self.wallet_tracker = WalletTracker()
         self.network_tracker = NetworkTracker()
@@ -36,22 +38,24 @@ class FeatureBuilder:
             temp_feats = self.temporal_tracker.extract_and_update(r)
             g_feats = self.graph_extractor.get_node_features(txid) if self.graph_extractor else {}
 
-            rows.append({
-                "txid": txid,
-                "timestamp": r.get("timestamp"),
-                "datetime": r.get("datetime"),
-                "src_ip": r.get("src_ip"),
-                "dst_ip": r.get("dst_ip"),
-                "primary_wallet": p_wallet,
-                "src_country": r.get("src_country"),
-                "src_asn": r.get("src_asn"),
-                "label": int(r.get("label", 2)),
-                "entity_type": str(r.get("entity_type", "NORMAL_USER")),
-                **t_feats,
-                **w_feats,
-                **n_feats,
-                **temp_feats,
-                **g_feats
-            })
+            rows.append(
+                {
+                    "txid": txid,
+                    "timestamp": r.get("timestamp"),
+                    "datetime": r.get("datetime"),
+                    "src_ip": r.get("src_ip"),
+                    "dst_ip": r.get("dst_ip"),
+                    "primary_wallet": p_wallet,
+                    "src_country": r.get("src_country"),
+                    "src_asn": r.get("src_asn"),
+                    "label": int(r.get("label", 2)),
+                    "entity_type": str(r.get("entity_type", "NORMAL_USER")),
+                    **t_feats,
+                    **w_feats,
+                    **n_feats,
+                    **temp_feats,
+                    **g_feats,
+                }
+            )
 
         return pd.DataFrame(rows)

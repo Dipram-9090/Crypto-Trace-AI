@@ -2,6 +2,7 @@
 Wallet-level historical and behavioral feature tracking for CryptoTrace AI.
 Tracks dynamic state strictly without future information leakage.
 """
+
 from collections import defaultdict
 from typing import Dict, Any, List
 import numpy as np
@@ -11,6 +12,7 @@ class WalletTracker:
     """
     Maintains historical state per wallet address up to current transaction timestamp.
     """
+
     def __init__(self):
         self.wallet_tx_count = defaultdict(int)
         self.wallet_sent_count = defaultdict(int)
@@ -70,5 +72,5 @@ class WalletTracker:
             "wallet_avg_sent_amount": avg_sent,
             "wallet_std_sent_amount": std_sent,
             "wallet_avg_recv_amount": avg_recv,
-            "wallet_in_out_tx_ratio": (prior_recv / prior_sent) if prior_sent > 0 else float(prior_recv)
+            "wallet_in_out_tx_ratio": (prior_recv / prior_sent) if prior_sent > 0 else float(prior_recv),
         }

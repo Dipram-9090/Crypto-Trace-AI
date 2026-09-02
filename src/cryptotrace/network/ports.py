@@ -2,6 +2,7 @@
 Network Port Classification and Protocol Mapping.
 """
 
+
 def classify_port(port: int) -> str:
     """Classify network port into Bitcoin standard, RPC, ephemeral, or proxy."""
     if port == 8333 or port == 18333:

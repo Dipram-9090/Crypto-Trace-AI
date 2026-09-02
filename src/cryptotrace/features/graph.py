@@ -1,12 +1,14 @@
 """
 Graph topological feature extraction.
 """
+
 import networkx as nx
 from typing import Dict
 
 
 class GraphFeatureExtractor:
     """Computes structural topological metrics from the heterogeneous network."""
+
     def __init__(self, G: nx.DiGraph):
         self.G = G
         self.pagerank = {}
@@ -35,7 +37,7 @@ class GraphFeatureExtractor:
                 "graph_out_degree": 0.0,
                 "graph_pagerank": 0.0,
                 "graph_2hop_neighbors": 0.0,
-                "graph_3hop_neighbors": 0.0
+                "graph_3hop_neighbors": 0.0,
             }
 
         deg = float(self.degree.get(node_id, 0))
@@ -60,5 +62,5 @@ class GraphFeatureExtractor:
             "graph_out_degree": out_deg,
             "graph_pagerank": pr * 1000.0,
             "graph_2hop_neighbors": float(len(neighbors_2)),
-            "graph_3hop_neighbors": float(len(neighbors_3))
+            "graph_3hop_neighbors": float(len(neighbors_3)),
         }

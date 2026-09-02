@@ -1,6 +1,7 @@
 """
 Integration tests for end-to-end inference pipeline.
 """
+
 import os
 import pytest
 from src.cryptotrace.pipelines.inference import run_inference_pipeline
@@ -11,9 +12,7 @@ def test_inference_pipeline_execution():
     assert os.path.exists(fixture_path)
 
     scored_df, alerts = run_inference_pipeline(
-        input_filepath=fixture_path,
-        models_dir="models",
-        config_yaml="configs/config.yaml"
+        input_filepath=fixture_path, models_dir="models", config_yaml="configs/config.yaml"
     )
 
     assert not scored_df.empty

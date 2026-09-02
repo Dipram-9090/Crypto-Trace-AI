@@ -2,6 +2,7 @@
 Heterogeneous forensic graph constructor for CryptoTrace AI.
 Builds multi-relational graphs across IP, Wallet, Transaction, ASN, and Country entities.
 """
+
 import networkx as nx
 import pandas as pd
 from typing import Dict, Any, List, Optional, Tuple
@@ -15,6 +16,7 @@ class ForensicGraphBuilder:
     """
     Constructs and queries the heterogeneous blockchain and network forensic graph.
     """
+
     def __init__(self):
         self.G = nx.DiGraph()
 
@@ -70,7 +72,7 @@ class ForensicGraphBuilder:
                 label=label,
                 entity_type=entity_type,
                 timestamp=timestamp,
-                fee=float(row.get("fee", 0.0))
+                fee=float(row.get("fee", 0.0)),
             )
 
             # 2. Add Source & Destination IP Nodes

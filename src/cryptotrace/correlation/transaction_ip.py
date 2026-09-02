@@ -1,6 +1,7 @@
 """
 Blockchain Transaction to Network IP Correlation Engine.
 """
+
 import pandas as pd
 from typing import Dict, List, Set
 from collections import defaultdict
@@ -8,6 +9,7 @@ from collections import defaultdict
 
 class TransactionIPCorrelator:
     """Tracks broadcasting nodes and peer hops for individual transactions."""
+
     def __init__(self):
         self.tx_to_ips = defaultdict(set)
         self.ip_to_txs = defaultdict(set)

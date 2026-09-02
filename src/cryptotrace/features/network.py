@@ -1,12 +1,14 @@
 """
 Network-layer metadata and IP infrastructure correlation features.
 """
+
 from collections import defaultdict
 from typing import Dict, Any
 
 
 class NetworkTracker:
     """Tracks network metadata and colocation across IPs and ports."""
+
     def __init__(self):
         self.ip_tx_count = defaultdict(int)
         self.ip_wallets = defaultdict(set)
@@ -39,5 +41,5 @@ class NetworkTracker:
             "ip_unique_ports_used": float(prior_ip_ports),
             "is_standard_btc_port": is_std_btc_port,
             "is_ephemeral_src_port": is_ephemeral_port,
-            "shared_infrastructure_indicator": shared_infra_score
+            "shared_infrastructure_indicator": shared_infra_score,
         }

@@ -1,6 +1,7 @@
 """
 CSV Ingestion parser for CryptoTrace AI.
 """
+
 import pandas as pd
 from typing import Tuple
 from src.cryptotrace.ingestion.validator import IngestionReport, validate_record, parse_list_field
@@ -37,8 +38,12 @@ def load_csv(filepath: str) -> Tuple[pd.DataFrame, IngestionReport]:
 
         rec["input_addresses"] = parse_list_field(rec.get("input_addresses", []))
         rec["output_addresses"] = parse_list_field(rec.get("output_addresses", []))
-        rec["input_amounts"] = [float(x) for x in parse_list_field(rec.get("input_amounts", [0.0])) if str(x).replace('.','',1).isdigit()] or [0.0]
-        rec["output_amounts"] = [float(x) for x in parse_list_field(rec.get("output_amounts", [0.0])) if str(x).replace('.','',1).isdigit()] or [0.0]
+        rec["input_amounts"] = [
+            float(x) for x in parse_list_field(rec.get("input_amounts", [0.0])) if str(x).replace(".", "", 1).isdigit()
+        ] or [0.0]
+        rec["output_amounts"] = [
+            float(x) for x in parse_list_field(rec.get("output_amounts", [0.0])) if str(x).replace(".", "", 1).isdigit()
+        ] or [0.0]
         rec["fee"] = float(rec.get("fee", 0.0))
         rec["label"] = int(rec.get("label", 2))
 

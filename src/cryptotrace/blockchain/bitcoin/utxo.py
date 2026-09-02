@@ -1,6 +1,7 @@
 """
 UTXO (Unspent Transaction Output) Set & Peeling Chain Tracking.
 """
+
 from typing import Dict, Optional, Set
 from dataclasses import dataclass
 
@@ -17,6 +18,7 @@ class UTXO:
 
 class UTXOSet:
     """In-memory UTXO tracker for identifying consolidation and peeling chains."""
+
     def __init__(self):
         self.utxos: Dict[str, UTXO] = {}
 

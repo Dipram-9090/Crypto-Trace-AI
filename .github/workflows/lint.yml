@@ -24,8 +24,8 @@ jobs:
 
       - name: Run Ruff Lint Check
         run: |
-          ruff check src/ tests/
+          ruff check src/ tests/ blockchain/ ai_ml/ backend/ frontend/
 
       - name: Check Formatting with Black
         run: |
-          black --check src/ tests/
+          black --check src/ tests/ blockchain/ ai_ml/ backend/ frontend/

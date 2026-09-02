@@ -1,6 +1,7 @@
 """
 Wallet-level longitudinal and behavioral feature tracking.
 """
+
 from collections import defaultdict
 from typing import Dict, Any
 import numpy as np
@@ -8,6 +9,7 @@ import numpy as np
 
 class WalletTracker:
     """Maintains historical state per wallet address strictly without lookahead leakage."""
+
     def __init__(self):
         self.wallet_tx_count = defaultdict(int)
         self.wallet_sent_count = defaultdict(int)
@@ -65,5 +67,5 @@ class WalletTracker:
             "wallet_avg_sent_amount": avg_sent,
             "wallet_std_sent_amount": std_sent,
             "wallet_avg_recv_amount": avg_recv,
-            "wallet_in_out_tx_ratio": (prior_recv / prior_sent) if prior_sent > 0 else float(prior_recv)
+            "wallet_in_out_tx_ratio": (prior_recv / prior_sent) if prior_sent > 0 else float(prior_recv),
         }

@@ -2,6 +2,7 @@
 Unified feature engineering pipeline for CryptoTrace AI.
 Extracts transaction, wallet, network, temporal, and topological features in strict chronological order.
 """
+
 import pandas as pd
 import numpy as np
 from typing import Tuple, List, Dict, Any
@@ -20,6 +21,7 @@ class FeaturePipeline:
     """
     Coordinates multi-modal feature extraction across transaction, temporal, network, and graph dimensions.
     """
+
     def __init__(self, windows_hours: List[int] = [1, 6, 24, 168], burst_threshold_sec: int = 60):
         self.windows_hours = windows_hours
         self.burst_threshold_sec = burst_threshold_sec
@@ -61,14 +63,18 @@ class FeaturePipeline:
             temp_feats = temporal_tracker.extract_and_update(row_dict)
 
             # 5. Graph topology features
-            g_feats = graph_extractor.get_node_features(txid) if graph_extractor else {
-                "graph_degree": 0.0,
-                "graph_in_degree": 0.0,
-                "graph_out_degree": 0.0,
-                "graph_pagerank": 0.0,
-                "graph_2hop_neighbors": 0.0,
-                "graph_3hop_neighbors": 0.0
-            }
+            g_feats = (
+                graph_extractor.get_node_features(txid)
+                if graph_extractor
+                else {
+                    "graph_degree": 0.0,
+                    "graph_in_degree": 0.0,
+                    "graph_out_degree": 0.0,
+                    "graph_pagerank": 0.0,
+                    "graph_2hop_neighbors": 0.0,
+                    "graph_3hop_neighbors": 0.0,
+                }
+            )
 
             combined = {
                 "txid": txid,
@@ -85,14 +91,25 @@ class FeaturePipeline:
                 **w_feats,
                 **net_feats,
                 **temp_feats,
-                **g_feats
+                **g_feats,
             }
             records.append(combined)
 
         features_df = pd.DataFrame(records)
-        
+
         # Identify numerical feature columns
-        meta_cols = ["txid", "timestamp", "datetime", "src_ip", "dst_ip", "primary_wallet", "src_country", "src_asn", "label", "entity_type"]
+        meta_cols = [
+            "txid",
+            "timestamp",
+            "datetime",
+            "src_ip",
+            "dst_ip",
+            "primary_wallet",
+            "src_country",
+            "src_asn",
+            "label",
+            "entity_type",
+        ]
         feature_names = [c for c in features_df.columns if c not in meta_cols]
 
         logger.info(f"Extracted {len(feature_names)} features for {len(features_df)} transactions.")

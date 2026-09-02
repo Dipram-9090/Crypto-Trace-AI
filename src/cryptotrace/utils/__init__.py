@@ -9,7 +9,7 @@ from src.cryptotrace.utils.paths import (
     EXTERNAL_DATA_DIR,
     MODELS_DIR,
     REPORTS_DIR,
-    CONFIGS_DIR
+    CONFIGS_DIR,
 )
 from src.cryptotrace.utils.config import ConfigManager
 from src.cryptotrace.utils.hashing import sha256_hash, double_sha256
@@ -30,5 +30,5 @@ __all__ = [
     "CONFIGS_DIR",
     "ConfigManager",
     "sha256_hash",
-    "double_sha256"
+    "double_sha256",
 ]

@@ -1,6 +1,7 @@
 """
 End-to-end inference and investigative triage pipeline.
 """
+
 import os
 import pandas as pd
 import numpy as np
@@ -25,9 +26,7 @@ logger = setup_logger(__name__)
 
 
 def run_inference_pipeline(
-    input_filepath: str,
-    models_dir: str = "models",
-    config_yaml: str = "configs/config.yaml"
+    input_filepath: str, models_dir: str = "models", config_yaml: str = "configs/config.yaml"
 ) -> Tuple[pd.DataFrame, List[Dict[str, Any]]]:
     """Ingests data, extracts multi-modal features, computes risk scores, and generates alerts."""
     ext = os.path.splitext(input_filepath)[1].lower()
@@ -62,26 +61,39 @@ def run_inference_pipeline(
         temp_feats = temporal_tracker.extract_and_update(r)
         g_feats = graph_extractor.get_node_features(txid)
 
-        records.append({
-            "txid": txid,
-            "timestamp": r.get("timestamp"),
-            "datetime": r.get("datetime"),
-            "src_ip": r.get("src_ip"),
-            "dst_ip": r.get("dst_ip"),
-            "primary_wallet": p_wallet,
-            "src_country": r.get("src_country"),
-            "src_asn": r.get("src_asn"),
-            "label": int(r.get("label", 2)),
-            "entity_type": str(r.get("entity_type", "NORMAL_USER")),
-            **t_feats,
-            **w_feats,
-            **n_feats,
-            **temp_feats,
-            **g_feats
-        })
+        records.append(
+            {
+                "txid": txid,
+                "timestamp": r.get("timestamp"),
+                "datetime": r.get("datetime"),
+                "src_ip": r.get("src_ip"),
+                "dst_ip": r.get("dst_ip"),
+                "primary_wallet": p_wallet,
+                "src_country": r.get("src_country"),
+                "src_asn": r.get("src_asn"),
+                "label": int(r.get("label", 2)),
+                "entity_type": str(r.get("entity_type", "NORMAL_USER")),
+                **t_feats,
+                **w_feats,
+                **n_feats,
+                **temp_feats,
+                **g_feats,
+            }
+        )
 
     feat_df = pd.DataFrame(records)
-    meta_cols = ["txid", "timestamp", "datetime", "src_ip", "dst_ip", "primary_wallet", "src_country", "src_asn", "label", "entity_type"]
+    meta_cols = [
+        "txid",
+        "timestamp",
+        "datetime",
+        "src_ip",
+        "dst_ip",
+        "primary_wallet",
+        "src_country",
+        "src_asn",
+        "label",
+        "entity_type",
+    ]
     feature_cols = [c for c in feat_df.columns if c not in meta_cols]
     X = feat_df[feature_cols].fillna(0.0)
 
@@ -91,8 +103,10 @@ def run_inference_pipeline(
     gnn_path = os.path.join(models_dir, "graphsage", "graphsage.pt")
 
     ml_probs = CryptoXGBoostClassifier.load(xgb_path).predict_proba(X) if os.path.exists(xgb_path) else np.zeros(len(X))
-    anom_scores = CryptoIsolationForest.load(if_path).predict_anomaly_score(X) if os.path.exists(if_path) else np.zeros(len(X))
-    
+    anom_scores = (
+        CryptoIsolationForest.load(if_path).predict_anomaly_score(X) if os.path.exists(if_path) else np.zeros(len(X))
+    )
+
     if os.path.exists(gnn_path):
         try:
             gnn = CryptoGraphSAGE.load(gnn_path)
@@ -105,7 +119,9 @@ def run_inference_pipeline(
 
     # Risk Engine & SHAP
     risk_engine = RiskEngine.from_config(config_yaml)
-    explainer = CryptoSHAPExplainer(CryptoXGBoostClassifier.load(xgb_path).model if os.path.exists(xgb_path) else None, feature_cols)
+    explainer = CryptoSHAPExplainer(
+        CryptoXGBoostClassifier.load(xgb_path).model if os.path.exists(xgb_path) else None, feature_cols
+    )
 
     composite_scores, risk_tiers = [], []
     alerts = []
@@ -121,22 +137,24 @@ def run_inference_pipeline(
 
         if score >= 30.0:
             evidence = explainer.explain_instance(row, top_k=5)
-            alerts.append({
-                "alert_id": f"ALERT_{len(alerts)+1:04d}",
-                "entity_type": "Wallet" if row.get("primary_wallet") else "Transaction",
-                "entity_id": str(row.get("primary_wallet") or row.get("txid")),
-                "txid": str(row.get("txid")),
-                "risk_score": score,
-                "risk_level": tier,
-                "ml_probability": round(prob, 4),
-                "anomaly_score": round(anom, 1),
-                "graph_score": round(g_sc, 1),
-                "top_features": evidence,
-                "src_ip": str(row.get("src_ip")),
-                "src_country": str(row.get("src_country")),
-                "src_asn": str(row.get("src_asn")),
-                "timestamp": str(row.get("timestamp"))
-            })
+            alerts.append(
+                {
+                    "alert_id": f"ALERT_{len(alerts)+1:04d}",
+                    "entity_type": "Wallet" if row.get("primary_wallet") else "Transaction",
+                    "entity_id": str(row.get("primary_wallet") or row.get("txid")),
+                    "txid": str(row.get("txid")),
+                    "risk_score": score,
+                    "risk_level": tier,
+                    "ml_probability": round(prob, 4),
+                    "anomaly_score": round(anom, 1),
+                    "graph_score": round(g_sc, 1),
+                    "top_features": evidence,
+                    "src_ip": str(row.get("src_ip")),
+                    "src_country": str(row.get("src_country")),
+                    "src_asn": str(row.get("src_asn")),
+                    "timestamp": str(row.get("timestamp")),
+                }
+            )
 
     feat_df["ml_probability"] = ml_probs
     feat_df["anomaly_score"] = anom_scores

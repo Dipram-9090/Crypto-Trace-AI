@@ -1,6 +1,7 @@
 """
 Elliptic Bitcoin Dataset Ingestion & Feature Parser.
 """
+
 import os
 import pandas as pd
 import numpy as np
@@ -12,6 +13,7 @@ logger = setup_logger(__name__)
 
 class EllipticDatasetLoader:
     """Loads and formats the Elliptic Bitcoin transaction graph dataset."""
+
     def __init__(self, data_dir: str = "data/raw/elliptic"):
         self.data_dir = data_dir
         self.features_file = os.path.join(data_dir, "elliptic_txs_features.csv")
@@ -30,17 +32,21 @@ class EllipticDatasetLoader:
         logger.info(f"Loading Elliptic dataset from {self.data_dir}...")
         df_classes = pd.read_csv(self.classes_file)
         # Class mapping: '1' -> 1 (illicit), '2' -> 0 (licit), 'unknown' -> 2
-        class_map = {'1': 1, '2': 0, 'unknown': 2, 1: 1, 2: 0, 3: 2}
-        df_classes['label'] = df_classes['class'].map(class_map).fillna(2).astype(int)
+        class_map = {"1": 1, "2": 0, "unknown": 2, 1: 1, 2: 0, 3: 2}
+        df_classes["label"] = df_classes["class"].map(class_map).fillna(2).astype(int)
 
         df_features = pd.read_csv(self.features_file, header=None)
         # Feature columns: col 0 = txId, col 1 = time_step, col 2..166 = local & aggregated features
-        feature_cols = ['txId', 'time_step'] + [f'feat_{i}' for i in range(1, len(df_features.columns) - 1)]
+        feature_cols = ["txId", "time_step"] + [f"feat_{i}" for i in range(1, len(df_features.columns) - 1)]
         df_features.columns = feature_cols
 
-        df_merged = pd.merge(df_features, df_classes[['txId', 'label']], on='txId', how='left')
+        df_merged = pd.merge(df_features, df_classes[["txId", "label"]], on="txId", how="left")
 
-        df_edges = pd.read_csv(self.edgelist_file) if os.path.exists(self.edgelist_file) else pd.DataFrame(columns=['txId1', 'txId2'])
+        df_edges = (
+            pd.read_csv(self.edgelist_file)
+            if os.path.exists(self.edgelist_file)
+            else pd.DataFrame(columns=["txId1", "txId2"])
+        )
         return df_merged, df_edges
 
     def _generate_sample_elliptic(self, n_samples: int = 500) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -52,21 +58,16 @@ class EllipticDatasetLoader:
 
         feats = np.random.randn(n_samples, 165)
         # Give illicit transactions higher variance and distinct feature signatures
-        illicit_mask = (labels == 1)
+        illicit_mask = labels == 1
         feats[illicit_mask, :10] += np.random.uniform(1.5, 3.5, size=(illicit_mask.sum(), 10))
 
-        feat_dict = {f'feat_{i}': feats[:, i - 1] for i in range(1, 166)}
-        df_merged = pd.DataFrame({
-            'txId': tx_ids,
-            'time_step': time_steps,
-            'label': labels,
-            **feat_dict
-        })
+        feat_dict = {f"feat_{i}": feats[:, i - 1] for i in range(1, 166)}
+        df_merged = pd.DataFrame({"txId": tx_ids, "time_step": time_steps, "label": labels, **feat_dict})
 
         edges = []
         for i in range(n_samples - 1):
             if np.random.rand() < 0.15:
-                edges.append({'txId1': tx_ids[i], 'txId2': tx_ids[np.random.randint(i + 1, n_samples)]})
+                edges.append({"txId1": tx_ids[i], "txId2": tx_ids[np.random.randint(i + 1, n_samples)]})
         df_edges = pd.DataFrame(edges)
 
         return df_merged, df_edges

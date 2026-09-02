@@ -1,12 +1,14 @@
 """
 Graph analytics and neighborhood sub-graph querying.
 """
+
 import networkx as nx
 from typing import Dict, Any, List, Optional
 
 
 class GraphAnalytics:
     """Provides ego-network extraction, path finding, and community discovery."""
+
     def __init__(self, G: nx.DiGraph):
         self.G = G
 

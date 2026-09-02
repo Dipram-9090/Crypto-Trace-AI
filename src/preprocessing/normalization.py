@@ -1,6 +1,7 @@
 """
 Normalization and scaling utilities for ML model feature matrices.
 """
+
 import numpy as np
 import pandas as pd
 from typing import List, Tuple
@@ -15,6 +16,7 @@ class FeatureScaler:
     """
     Robust feature scaler that handles extreme crypto outliers using RobustScaler or StandardScaler.
     """
+
     def __init__(self, method: str = "robust"):
         self.method = method
         self.scaler = RobustScaler() if method == "robust" else StandardScaler()

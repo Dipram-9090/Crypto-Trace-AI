@@ -1,11 +1,13 @@
 """
 Confidence Interval & Calibration Engine for Investigative Lead Scoring.
 """
+
 import numpy as np
 
 
 class ConfidenceScorer:
     """Calculates evidence convergence and confidence score across multiple models."""
+
     @staticmethod
     def compute_confidence(ml_prob: float, anomaly_score: float, graph_score: float) -> float:
         """Calculates multi-modal consensus confidence between 0.0 and 1.0."""

@@ -6,13 +6,9 @@ from src.cryptotrace.blockchain.bitcoin import (
     UTXOSet,
     UTXO,
     identify_script_type,
-    parse_rpc_raw_transaction
+    parse_rpc_raw_transaction,
 )
-from src.cryptotrace.blockchain.addresses import (
-    is_valid_bitcoin_address,
-    normalize_address,
-    classify_address_encoding
-)
+from src.cryptotrace.blockchain.addresses import is_valid_bitcoin_address, normalize_address, classify_address_encoding
 from src.cryptotrace.blockchain.rpc import BitcoinCoreRPC
 
 __all__ = [
@@ -27,5 +23,5 @@ __all__ = [
     "is_valid_bitcoin_address",
     "normalize_address",
     "classify_address_encoding",
-    "BitcoinCoreRPC"
+    "BitcoinCoreRPC",
 ]

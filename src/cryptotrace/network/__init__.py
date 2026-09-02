@@ -10,5 +10,5 @@ __all__ = [
     "compute_time_delta_seconds",
     "parse_asn_string",
     "GeoIPLookup",
-    "GeoIPInfo"
+    "GeoIPInfo",
 ]

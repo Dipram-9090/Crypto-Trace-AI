@@ -9,5 +9,5 @@ __all__ = [
     "run_feature_pipeline",
     "run_training_pipeline",
     "run_evaluation_pipeline",
-    "run_inference_pipeline"
+    "run_inference_pipeline",
 ]

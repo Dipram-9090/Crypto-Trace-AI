@@ -1,6 +1,7 @@
 """
 Bitcoin Block Data Structure and Header Extraction.
 """
+
 from dataclasses import dataclass, field
 from typing import List
 from src.cryptotrace.blockchain.bitcoin.transaction import BitcoinTransaction

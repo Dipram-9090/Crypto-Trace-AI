@@ -1,12 +1,14 @@
 """
 Sub-graph and Neighbor Attributions for GNN Decision Explainability.
 """
+
 import networkx as nx
 from typing import Dict, Any, List
 
 
 class GraphNeighborhoodExplainer:
     """Explains GNN node predictions by extracting the top influential 1-hop and 2-hop subgraphs."""
+
     def __init__(self, G: nx.DiGraph):
         self.G = G
 
@@ -21,8 +23,4 @@ class GraphNeighborhoodExplainer:
             sub_nodes.add(n)
 
         sub_G = self.G.subgraph(sub_nodes)
-        return {
-            "target_node": target_node,
-            "subgraph_nodes": list(sub_G.nodes),
-            "subgraph_edges": list(sub_G.edges)
-        }
+        return {"target_node": target_node, "subgraph_nodes": list(sub_G.nodes), "subgraph_edges": list(sub_G.edges)}

@@ -1,6 +1,7 @@
 """
 Autonomous System (ASN) and Routing Intelligence.
 """
+
 from typing import Dict, Any
 
 

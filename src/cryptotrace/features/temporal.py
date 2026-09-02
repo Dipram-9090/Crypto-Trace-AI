@@ -1,6 +1,7 @@
 """
 Temporal dynamics and velocity feature extractor.
 """
+
 from collections import deque, defaultdict
 from datetime import datetime
 from typing import Dict, Any, List
@@ -8,6 +9,7 @@ from typing import Dict, Any, List
 
 class TemporalTracker:
     """Computes rolling velocity and burst metrics for transactions and entities."""
+
     def __init__(self, windows_hours: List[int] = [1, 6, 24, 168], burst_threshold_sec: int = 60):
         self.windows_hours = windows_hours
         self.burst_threshold_sec = burst_threshold_sec
@@ -44,7 +46,11 @@ class TemporalTracker:
         last_ip_t = self.last_ip_time.get(src_ip)
         time_since_prev_ip = max(0.0, (ts - last_ip_t).total_seconds()) if last_ip_t else 86400.0
 
-        burst_score = 1.0 if time_since_prev_w < self.burst_threshold_sec else float(self.burst_threshold_sec / (time_since_prev_w + 1e-5))
+        burst_score = (
+            1.0
+            if time_since_prev_w < self.burst_threshold_sec
+            else float(self.burst_threshold_sec / (time_since_prev_w + 1e-5))
+        )
 
         cur_epoch = ts.timestamp()
         w_1h = sum(1 for t in w_dq if cur_epoch - t <= 3600)
@@ -72,5 +78,5 @@ class TemporalTracker:
             "wallet_txs_last_7d": float(w_7d),
             "ip_txs_last_1h": float(ip_1h),
             "ip_txs_last_24h": float(ip_24h),
-            "wallet_tx_velocity_per_hour": tx_velocity
+            "wallet_tx_velocity_per_hour": tx_velocity,
         }

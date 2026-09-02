@@ -1,6 +1,7 @@
 """
 Integration tests for multi-format ingestion pipeline.
 """
+
 from src.cryptotrace.pipelines.ingestion_pipeline import run_ingestion_pipeline
 
 

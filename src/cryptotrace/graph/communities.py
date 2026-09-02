@@ -1,6 +1,7 @@
 """
 Graph Community Detection and Component Analysis.
 """
+
 import networkx as nx
 from typing import List, Set
 

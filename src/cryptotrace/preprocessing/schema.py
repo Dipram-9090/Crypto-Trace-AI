@@ -1,6 +1,7 @@
 """
 Data schema definitions and type specifications.
 """
+
 from dataclasses import dataclass
 from typing import List, Optional
 

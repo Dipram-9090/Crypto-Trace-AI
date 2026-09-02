@@ -1,12 +1,14 @@
 """
 Wallet Address to Infrastructure IP Correlation.
 """
+
 from collections import defaultdict
 from typing import Dict, List, Set
 
 
 class WalletIPCorrelator:
     """Discovers shared infrastructure and address hopping across network IPs."""
+
     def __init__(self):
         self.wallet_to_ips = defaultdict(set)
         self.ip_to_wallets = defaultdict(set)

@@ -12,5 +12,5 @@ __all__ = [
     "UTXOSet",
     "UTXO",
     "identify_script_type",
-    "parse_rpc_raw_transaction"
+    "parse_rpc_raw_transaction",
 ]

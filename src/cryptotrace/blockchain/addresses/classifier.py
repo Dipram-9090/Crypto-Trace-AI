@@ -2,6 +2,7 @@
 Address Encoding Format Classifier.
 """
 
+
 def classify_address_encoding(address: str) -> str:
     """Classify encoding type: P2PKH, P2SH, P2WPKH, P2WSH, P2TR, or TESTNET."""
     if not address or not isinstance(address, str):

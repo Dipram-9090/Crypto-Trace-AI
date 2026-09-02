@@ -16,5 +16,5 @@ __all__ = [
     "EllipticDatasetLoader",
     "EllipticPlusPlusLoader",
     "BitcoinHeistLoader",
-    "NetworkObservationBridge"
+    "NetworkObservationBridge",
 ]

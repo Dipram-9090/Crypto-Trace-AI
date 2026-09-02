@@ -2,6 +2,7 @@
 Investigative Lead and Ranked Alert Generation Engine for CryptoTrace AI.
 Synthesizes multi-model predictions and graph intelligence into actionable forensic alerts.
 """
+
 from dataclasses import dataclass, field
 import pandas as pd
 import numpy as np
@@ -46,7 +47,7 @@ class ForensicAlert:
             "related_ips": self.related_ips,
             "related_asns": self.related_asns,
             "timestamp": self.timestamp,
-            "explanation": self.explanation
+            "explanation": self.explanation,
         }
 
 
@@ -54,13 +55,12 @@ class AlertGenerator:
     """
     Generates and filters ranked forensic alerts from processed transactions and predictions.
     """
+
     def __init__(self, min_risk_threshold: float = 30.0):
         self.min_risk_threshold = min_risk_threshold
 
     def generate_alerts(
-        self,
-        scored_df: pd.DataFrame,
-        evidence_dict: Optional[Dict[str, List[Dict[str, Any]]]] = None
+        self, scored_df: pd.DataFrame, evidence_dict: Optional[Dict[str, List[Dict[str, Any]]]] = None
     ) -> List[ForensicAlert]:
         """
         Generate ranked alert list from scored DataFrame.
@@ -92,7 +92,7 @@ class AlertGenerator:
             graph_score = float(row.get("graph_score", 0.0))
 
             evidence_items = evidence_dict.get(txid, []) if evidence_dict else []
-            
+
             # Construct summary narrative
             reasons = [e.get("description", e.get("feature", "")) for e in evidence_items[:3]]
             reason_str = "; ".join(reasons) if reasons else "Multi-modal model anomaly detection"
@@ -112,7 +112,7 @@ class AlertGenerator:
                 related_ips=[src_ip] if src_ip else [],
                 related_asns=[src_asn] if src_asn else [],
                 timestamp=ts,
-                explanation=f"Flagged with {risk_level} priority: {reason_str}"
+                explanation=f"Flagged with {risk_level} priority: {reason_str}",
             )
             alerts.append(alert)
 
@@ -120,10 +120,7 @@ class AlertGenerator:
         return alerts
 
     def filter_alerts(
-        self,
-        alerts: List[ForensicAlert],
-        risk_level: Optional[str] = None,
-        search_query: Optional[str] = None
+        self, alerts: List[ForensicAlert], risk_level: Optional[str] = None, search_query: Optional[str] = None
     ) -> List[ForensicAlert]:
         """Filter alerts by risk tier or text search in entity IDs/IPs/ASNs."""
         res = alerts
@@ -133,12 +130,14 @@ class AlertGenerator:
         if search_query and search_query.strip():
             q = search_query.strip().lower()
             res = [
-                a for a in res if (
-                    q in a.alert_id.lower() or
-                    q in a.entity_id.lower() or
-                    any(q in w.lower() for w in a.related_wallets) or
-                    any(q in ip.lower() for ip in a.related_ips) or
-                    any(q in asn.lower() for asn in a.related_asns)
+                a
+                for a in res
+                if (
+                    q in a.alert_id.lower()
+                    or q in a.entity_id.lower()
+                    or any(q in w.lower() for w in a.related_wallets)
+                    or any(q in ip.lower() for ip in a.related_ips)
+                    or any(q in asn.lower() for asn in a.related_asns)
                 )
             ]
         return res

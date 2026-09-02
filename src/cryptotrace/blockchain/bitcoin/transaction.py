@@ -1,6 +1,7 @@
 """
 Bitcoin Transaction Data Structures and UTXO Handling.
 """
+
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
 

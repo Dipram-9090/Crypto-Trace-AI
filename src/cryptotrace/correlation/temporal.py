@@ -1,12 +1,14 @@
 """
 Temporal Correlation between P2P network broadcast and block confirmations.
 """
+
 from typing import Dict, Any, Optional
 from datetime import datetime
 
 
 class TemporalCorrelator:
     """Calculates temporal broadcast anomalies, velocity bursts, and propagation delays."""
+
     def __init__(self):
         self.last_seen_times = {}
 

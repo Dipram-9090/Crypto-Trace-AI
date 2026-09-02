@@ -1,6 +1,7 @@
 """
 Feature engineering module for transaction, wallet, network, temporal, and topological dimensions.
 """
+
 from src.features.transaction_features import extract_transaction_features
 from src.features.wallet_features import WalletTracker
 from src.features.network_features import NetworkTracker
@@ -14,5 +15,5 @@ __all__ = [
     "NetworkTracker",
     "TemporalTracker",
     "GraphFeatureExtractor",
-    "FeaturePipeline"
+    "FeaturePipeline",
 ]

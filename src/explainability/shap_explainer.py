@@ -2,6 +2,7 @@
 Model explainability engine using SHAP for CryptoTrace AI.
 Generates local feature attributions, directionality, and structured forensic evidence packages.
 """
+
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, List, Optional
@@ -31,7 +32,7 @@ FEATURE_EXPLANATIONS = {
     "graph_2hop_neighbors": "Dense 2-hop neighborhood in forensic graph",
     "graph_3hop_neighbors": "Broad 3-hop multi-layer network connectivity",
     "fee_ratio": "Abnormal transaction fee ratio",
-    "transaction_value": "High absolute transaction value"
+    "transaction_value": "High absolute transaction value",
 }
 
 
@@ -39,6 +40,7 @@ class CryptoSHAPExplainer:
     """
     SHAP-based explainability engine for XGBoost forensic models.
     """
+
     def __init__(self, model: Any, feature_names: List[str]):
         self.model = model
         self.feature_names = feature_names
@@ -54,11 +56,7 @@ class CryptoSHAPExplainer:
             logger.warning(f"SHAP TreeExplainer initialization warning: {e}. Fallback to Exact/Kernel.")
             self.explainer = None
 
-    def explain_instance(
-        self,
-        features_row: pd.Series,
-        top_k: int = 6
-    ) -> List[Dict[str, Any]]:
+    def explain_instance(self, features_row: pd.Series, top_k: int = 6) -> List[Dict[str, Any]]:
         """
         Compute top feature contributions for a single transaction or entity.
         Returns list of structured evidence items.
@@ -89,14 +87,16 @@ class CryptoSHAPExplainer:
         for feat, s_val, val in zip(self.feature_names, s_vals, vals):
             human_desc = FEATURE_EXPLANATIONS.get(feat, feat.replace("_", " ").title())
             direction = "increased_risk" if s_val > 0 else "decreased_risk"
-            contributions.append({
-                "feature": feat,
-                "description": human_desc,
-                "value": round(float(val), 4),
-                "shap_value": round(float(s_val), 4),
-                "direction": direction,
-                "magnitude": abs(float(s_val))
-            })
+            contributions.append(
+                {
+                    "feature": feat,
+                    "description": human_desc,
+                    "value": round(float(val), 4),
+                    "shap_value": round(float(s_val), 4),
+                    "direction": direction,
+                    "magnitude": abs(float(s_val)),
+                }
+            )
 
         # Sort by magnitude of contribution
         contributions.sort(key=lambda x: x["magnitude"], reverse=True)
@@ -111,7 +111,7 @@ class CryptoSHAPExplainer:
         graph_score: float,
         risk_level: str,
         features_row: pd.Series,
-        top_k: int = 6
+        top_k: int = 6,
     ) -> Dict[str, Any]:
         """
         Generate machine-readable JSON forensic package for investigations and dashboard.
@@ -124,5 +124,5 @@ class CryptoSHAPExplainer:
             "ml_probability": round(ml_probability, 4),
             "anomaly_score": round(anomaly_score, 1),
             "graph_score": round(graph_score, 1),
-            "evidence": evidence
+            "evidence": evidence,
         }

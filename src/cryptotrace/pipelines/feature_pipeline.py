@@ -1,6 +1,7 @@
 """
 Feature Engineering and Heterogeneous Graph Construction Pipeline.
 """
+
 import os
 import pandas as pd
 from typing import Tuple
@@ -10,7 +11,9 @@ from src.cryptotrace.features.builder import FeatureBuilder
 from src.cryptotrace.storage.parquet_io import write_parquet
 
 
-def run_feature_pipeline(df_clean: pd.DataFrame, out_parquet: str = "data/processed/features.parquet") -> Tuple[pd.DataFrame, nx.DiGraph]:
+def run_feature_pipeline(
+    df_clean: pd.DataFrame, out_parquet: str = "data/processed/features.parquet"
+) -> Tuple[pd.DataFrame, nx.DiGraph]:
     """Constructs heterogeneous forensic graph and calculates anti-leakage feature sets."""
     builder = ForensicGraphBuilder()
     G = builder.build_from_dataframe(df_clean)

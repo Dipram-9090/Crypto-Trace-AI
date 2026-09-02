@@ -2,6 +2,7 @@
 Synthetic Bitcoin transaction and network-layer metadata generator.
 Simulates realistic behavioral archetypes with realistic overlapping distributions.
 """
+
 import random
 import json
 import xml.etree.ElementTree as ET
@@ -14,14 +15,7 @@ from src.geoip.lookup import GeoIPLookup
 
 logger = logging.getLogger(__name__)
 
-ACTOR_TYPES = [
-    "NORMAL_USER",
-    "EXCHANGE",
-    "MERCHANT",
-    "MINER",
-    "HIGH_VOLUME_SERVICE",
-    "SUSPICIOUS_ACTOR"
-]
+ACTOR_TYPES = ["NORMAL_USER", "EXCHANGE", "MERCHANT", "MINER", "HIGH_VOLUME_SERVICE", "SUSPICIOUS_ACTOR"]
 
 SCRIPT_TYPES = ["p2pkh", "p2sh", "p2wpkh", "p2wsh", "p2tr", "multisig"]
 
@@ -30,13 +24,14 @@ class SyntheticDataGenerator:
     """
     Generates multi-layer Bitcoin blockchain and network correlation data.
     """
+
     def __init__(
         self,
         num_transactions: int = 12000,
         num_wallets: int = 1200,
         num_ips: int = 150,
         illicit_ratio: float = 0.08,
-        seed: int = 42
+        seed: int = 42,
     ):
         self.num_transactions = num_transactions
         self.num_wallets = num_wallets
@@ -48,7 +43,9 @@ class SyntheticDataGenerator:
         random.seed(self.seed)
 
         # Initialize pools
-        self.wallets: List[str] = [f"1BTC{i:05d}{random.choice(['a', 'b', 'c', 'x', 'y', 'z'])}" for i in range(self.num_wallets)]
+        self.wallets: List[str] = [
+            f"1BTC{i:05d}{random.choice(['a', 'b', 'c', 'x', 'y', 'z'])}" for i in range(self.num_wallets)
+        ]
         self.ips: List[str] = self._generate_ip_pool()
         self.entities: Dict[str, Dict[str, Any]] = self._assign_entity_profiles()
 
@@ -56,15 +53,15 @@ class SyntheticDataGenerator:
         """Generate a realistic pool of public IP addresses across subnets."""
         subnets = [
             "185.220.101.",  # NL / VPN / Tor exit
-            "51.15.89.",     # DE / Cloud
-            "104.244.72.",   # US / Hosting
-            "45.33.32.",     # CH / Dedicated
-            "194.87.144.",   # RU / VPS
-            "103.21.244.",   # IN / Telecom
-            "178.62.204.",   # GB / DigitalOcean
-            "119.81.130.",   # SG / SoftLayer
-            "198.51.100.",   # PA / Offshore
-            "91.200.12.",    # SC / Hosting
+            "51.15.89.",  # DE / Cloud
+            "104.244.72.",  # US / Hosting
+            "45.33.32.",  # CH / Dedicated
+            "194.87.144.",  # RU / VPS
+            "103.21.244.",  # IN / Telecom
+            "178.62.204.",  # GB / DigitalOcean
+            "119.81.130.",  # SG / SoftLayer
+            "198.51.100.",  # PA / Offshore
+            "91.200.12.",  # SC / Hosting
         ]
         ips = []
         for i in range(self.num_ips):
@@ -84,7 +81,7 @@ class SyntheticDataGenerator:
         for i in range(num_actors):
             actor_id = f"ACTOR_{i:04d}"
             actor_type = random.choices(ACTOR_TYPES, weights=weights)[0]
-            
+
             # Suspicious actor ratio constraint
             if actor_type == "SUSPICIOUS_ACTOR":
                 label = 1
@@ -119,7 +116,7 @@ class SyntheticDataGenerator:
                 "actor_type": actor_type,
                 "label": label,
                 "wallets": actor_wallets,
-                "ips": actor_ips
+                "ips": actor_ips,
             }
 
         return entities
@@ -150,7 +147,7 @@ class SyntheticDataGenerator:
             current_time += time_delta
 
             txid = f"TX_{i+1:06d}_{hash(str(current_time) + str(i)) % 10000:04d}"
-            
+
             # Select source and destination IPs
             src_ip = random.choice(actor["ips"])
             dst_ip = random.choice(self.ips)
@@ -199,14 +196,18 @@ class SyntheticDataGenerator:
 
             # Input amounts
             in_slice = base_amount / len(inputs)
-            input_amounts = [round(max(0.0001, in_slice + random.uniform(-in_slice * 0.1, in_slice * 0.1)), 6) for _ in inputs]
+            input_amounts = [
+                round(max(0.0001, in_slice + random.uniform(-in_slice * 0.1, in_slice * 0.1)), 6) for _ in inputs
+            ]
             total_in = sum(input_amounts)
 
             fee = round(max(0.00005, total_in * random.uniform(0.0001, 0.002)), 6)
             total_out = total_in - fee
 
             out_slice = total_out / len(outputs)
-            output_amounts = [round(max(0.0001, out_slice + random.uniform(-out_slice * 0.15, out_slice * 0.15)), 6) for _ in outputs]
+            output_amounts = [
+                round(max(0.0001, out_slice + random.uniform(-out_slice * 0.15, out_slice * 0.15)), 6) for _ in outputs
+            ]
             # Balance last output exactly
             output_amounts[-1] = round(max(0.0001, total_out - sum(output_amounts[:-1])), 6)
 
@@ -232,7 +233,7 @@ class SyntheticDataGenerator:
                 "src_asn": src_geo.asn,
                 "dst_asn": dst_geo.asn,
                 "label": actor["label"],
-                "entity_type": actor_type
+                "entity_type": actor_type,
             }
             transactions.append(rec)
 
@@ -268,7 +269,7 @@ class SyntheticDataGenerator:
                     child.text = json.dumps(v)
                 else:
                     child.text = str(v)
-        
+
         xml_str = minidom.parseString(ET.tostring(root, "utf-8")).toprettyxml(indent="  ")
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(xml_str)

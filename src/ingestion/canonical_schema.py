@@ -1,12 +1,12 @@
 """
 Canonical schema definitions and validation utilities for CryptoTrace AI data ingestion.
 """
+
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional
 import json
 import re
 from datetime import datetime
-
 
 REQUIRED_COLUMNS = [
     "txid",
@@ -26,7 +26,7 @@ REQUIRED_COLUMNS = [
     "src_asn",
     "dst_asn",
     "label",
-    "entity_type"
+    "entity_type",
 ]
 
 IP_REGEX = re.compile(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
@@ -49,7 +49,7 @@ class IngestionReport:
             "duplicate_rows": self.duplicate_rows,
             "missing_fields_count": self.missing_fields_count,
             "error_sample": self.errors[:10],
-            "success_rate": (self.valid_rows / self.total_rows * 100) if self.total_rows > 0 else 0.0
+            "success_rate": (self.valid_rows / self.total_rows * 100) if self.total_rows > 0 else 0.0,
         }
 
 

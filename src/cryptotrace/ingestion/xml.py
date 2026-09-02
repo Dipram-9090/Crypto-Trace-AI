@@ -1,6 +1,7 @@
 """
 XML ingestion parser for CryptoTrace AI.
 """
+
 import xml.etree.ElementTree as ET
 import pandas as pd
 from typing import Tuple, Dict, Any, List
@@ -40,8 +41,12 @@ def load_xml(filepath: str) -> Tuple[pd.DataFrame, IngestionReport]:
 
         rec["input_addresses"] = parse_list_field(rec.get("input_addresses", []))
         rec["output_addresses"] = parse_list_field(rec.get("output_addresses", []))
-        rec["input_amounts"] = [float(x) for x in parse_list_field(rec.get("input_amounts", [0.0])) if str(x).replace('.','',1).isdigit()] or [0.0]
-        rec["output_amounts"] = [float(x) for x in parse_list_field(rec.get("output_amounts", [0.0])) if str(x).replace('.','',1).isdigit()] or [0.0]
+        rec["input_amounts"] = [
+            float(x) for x in parse_list_field(rec.get("input_amounts", [0.0])) if str(x).replace(".", "", 1).isdigit()
+        ] or [0.0]
+        rec["output_amounts"] = [
+            float(x) for x in parse_list_field(rec.get("output_amounts", [0.0])) if str(x).replace(".", "", 1).isdigit()
+        ] or [0.0]
         rec["fee"] = float(rec.get("fee", 0.0))
         rec["label"] = int(rec.get("label", 2))
 

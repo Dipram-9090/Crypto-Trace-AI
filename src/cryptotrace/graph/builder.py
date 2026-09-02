@@ -1,6 +1,7 @@
 """
 Heterogeneous forensic graph constructor.
 """
+
 import networkx as nx
 import pandas as pd
 from typing import Dict, Any, List
@@ -12,6 +13,7 @@ logger = setup_logger(__name__)
 
 class ForensicGraphBuilder:
     """Constructs multi-relational graphs across IP, Wallet, Transaction, ASN, and Country entities."""
+
     def __init__(self):
         self.G = nx.DiGraph()
 
@@ -34,20 +36,28 @@ class ForensicGraphBuilder:
             inputs = row.get("input_addresses", [])
             outputs = row.get("output_addresses", [])
             if isinstance(inputs, str):
-                try: inputs = json.loads(inputs)
-                except Exception: inputs = [inputs]
+                try:
+                    inputs = json.loads(inputs)
+                except Exception:
+                    inputs = [inputs]
             if isinstance(outputs, str):
-                try: outputs = json.loads(outputs)
-                except Exception: outputs = [outputs]
+                try:
+                    outputs = json.loads(outputs)
+                except Exception:
+                    outputs = [outputs]
 
             in_amounts = row.get("input_amounts", [0.0])
             out_amounts = row.get("output_amounts", [0.0])
             if isinstance(in_amounts, str):
-                try: in_amounts = json.loads(in_amounts)
-                except Exception: in_amounts = [0.0]
+                try:
+                    in_amounts = json.loads(in_amounts)
+                except Exception:
+                    in_amounts = [0.0]
             if isinstance(out_amounts, str):
-                try: out_amounts = json.loads(out_amounts)
-                except Exception: out_amounts = [0.0]
+                try:
+                    out_amounts = json.loads(out_amounts)
+                except Exception:
+                    out_amounts = [0.0]
 
             self.G.add_node(
                 txid,
@@ -55,7 +65,7 @@ class ForensicGraphBuilder:
                 label=label,
                 entity_type=entity_type,
                 timestamp=timestamp,
-                fee=float(row.get("fee", 0.0))
+                fee=float(row.get("fee", 0.0)),
             )
 
             if src_ip:

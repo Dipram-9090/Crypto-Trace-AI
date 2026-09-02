@@ -1,6 +1,7 @@
 """
 Graph Centrality Analytics (Degree, PageRank, Betweenness).
 """
+
 import networkx as nx
 from typing import Dict, Any
 
@@ -18,8 +19,4 @@ def compute_centrality_metrics(G: nx.DiGraph) -> Dict[str, Dict[str, float]]:
     in_deg = dict(G.in_degree())
     out_deg = dict(G.out_degree())
 
-    return {
-        "pagerank": pr,
-        "in_degree": in_deg,
-        "out_degree": out_deg
-    }
+    return {"pagerank": pr, "in_degree": in_deg, "out_degree": out_deg}

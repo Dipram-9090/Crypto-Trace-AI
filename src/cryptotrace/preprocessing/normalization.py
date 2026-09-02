@@ -1,6 +1,7 @@
 """
 Feature scaling and normalization utilities.
 """
+
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import RobustScaler, StandardScaler
@@ -9,6 +10,7 @@ import joblib
 
 class FeatureScaler:
     """Outlier-resistant feature scaler."""
+
     def __init__(self, method: str = "robust"):
         self.method = method
         self.scaler = RobustScaler() if method == "robust" else StandardScaler()

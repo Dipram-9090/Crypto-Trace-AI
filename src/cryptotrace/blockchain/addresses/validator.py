@@ -1,6 +1,7 @@
 """
 Bitcoin Address Validation (Legacy Base58Check, SegWit Bech32, and Taproot).
 """
+
 import re
 
 

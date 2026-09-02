@@ -1,6 +1,7 @@
 """
 Model Benchmark & Temporal Evaluation Pipeline.
 """
+
 import os
 import pandas as pd
 import numpy as np
@@ -15,16 +16,25 @@ from src.cryptotrace.storage.parquet_io import write_parquet
 
 
 def run_evaluation_pipeline(
-    features_csv: str = "data/processed/features.csv",
-    models_dir: str = "models",
-    out_dir: str = "reports/metrics"
+    features_csv: str = "data/processed/features.csv", models_dir: str = "models", out_dir: str = "reports/metrics"
 ) -> pd.DataFrame:
     """Evaluates all baseline, supervised, unsupervised, and graph models on held-out temporal splits."""
     os.makedirs(out_dir, exist_ok=True)
     df = pd.read_csv(features_csv)
     df_sup = df[df["label"].isin([0, 1])].reset_index(drop=True)
 
-    meta_cols = ["txid", "timestamp", "datetime", "src_ip", "dst_ip", "primary_wallet", "src_country", "src_asn", "label", "entity_type"]
+    meta_cols = [
+        "txid",
+        "timestamp",
+        "datetime",
+        "src_ip",
+        "dst_ip",
+        "primary_wallet",
+        "src_country",
+        "src_asn",
+        "label",
+        "entity_type",
+    ]
     feature_cols = [c for c in df_sup.columns if c not in meta_cols]
 
     N = len(df_sup)
@@ -52,16 +62,18 @@ def run_evaluation_pipeline(
     if os.path.exists(xgb_path):
         xgb_model = CryptoXGBoostClassifier.load(xgb_path)
         xgb_eval = xgb_model.evaluate(X_test, y_test)
-        results.append({
-            "Model": "XGBoost (Primary Classifier)",
-            "Precision": round(xgb_eval["precision"], 4),
-            "Recall": round(xgb_eval["recall"], 4),
-            "F1-Score": round(xgb_eval["f1"], 4),
-            "PR-AUC": round(xgb_eval["pr_auc"], 4),
-            "ROC-AUC": round(xgb_eval["roc_auc"], 4),
-            "Precision@100": xgb_eval.get("precision@100", 0.0),
-            "Recall@100": xgb_eval.get("recall@100", 0.0)
-        })
+        results.append(
+            {
+                "Model": "XGBoost (Primary Classifier)",
+                "Precision": round(xgb_eval["precision"], 4),
+                "Recall": round(xgb_eval["recall"], 4),
+                "F1-Score": round(xgb_eval["f1"], 4),
+                "PR-AUC": round(xgb_eval["pr_auc"], 4),
+                "ROC-AUC": round(xgb_eval["roc_auc"], 4),
+                "Precision@100": xgb_eval.get("precision@100", 0.0),
+                "Recall@100": xgb_eval.get("recall@100", 0.0),
+            }
+        )
 
     comp_df = pd.DataFrame(results)
     out_csv = os.path.join(out_dir, "model_comparison.csv")

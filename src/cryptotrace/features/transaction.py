@@ -1,6 +1,7 @@
 """
 Transaction-level structural and amount features.
 """
+
 import numpy as np
 from typing import Dict, Any, List
 
@@ -58,5 +59,5 @@ def extract_transaction_features(row: Dict[str, Any]) -> Dict[str, float]:
         "output_entropy": out_entropy,
         "input_entropy": in_entropy,
         "is_high_fanout": 1.0 if out_count >= 8 else 0.0,
-        "is_high_fanin": 1.0 if in_count >= 6 else 0.0
+        "is_high_fanin": 1.0 if in_count >= 6 else 0.0,
     }

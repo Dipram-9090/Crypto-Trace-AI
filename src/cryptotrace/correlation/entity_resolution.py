@@ -1,12 +1,14 @@
 """
 Entity Resolution across Multi-Input Spending and Co-located Network Endpoints.
 """
+
 from typing import Dict, List, Set
 import networkx as nx
 
 
 class EntityResolver:
     """Combines Multi-Input Heuristics (Common-Input-Ownership) and Co-located IP Clustered Identities."""
+
     def __init__(self):
         self.wallet_graph = nx.Graph()
 

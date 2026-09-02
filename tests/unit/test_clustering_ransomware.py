@@ -1,6 +1,7 @@
 """
 Unit tests for Behavioral Clustering and Ransomware models.
 """
+
 import pandas as pd
 import numpy as np
 from src.cryptotrace.models.clustering import BehavioralClusterer
@@ -17,15 +18,17 @@ def test_behavioral_clustering():
 
 
 def test_ransomware_model():
-    df_heist = pd.DataFrame({
-        "length": [5, 10, 2, 8],
-        "weight": [1.5, 4.0, 0.5, 3.2],
-        "count": [3, 15, 1, 10],
-        "looped": [0, 4, 0, 3],
-        "neighbors": [4, 12, 2, 8],
-        "income": [1000000, 50000000, 500000, 30000000],
-        "is_ransomware": [0, 1, 0, 1]
-    })
+    df_heist = pd.DataFrame(
+        {
+            "length": [5, 10, 2, 8],
+            "weight": [1.5, 4.0, 0.5, 3.2],
+            "count": [3, 15, 1, 10],
+            "looped": [0, 4, 0, 3],
+            "neighbors": [4, 12, 2, 8],
+            "income": [1000000, 50000000, 500000, 30000000],
+            "is_ransomware": [0, 1, 0, 1],
+        }
+    )
     model = RansomwareClassifier(n_estimators=10, max_depth=3)
     metrics = model.train(df_heist)
     assert "pr_auc" in metrics

@@ -1,6 +1,7 @@
 """
 Schema validation utilities for data ingestion.
 """
+
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional
 import json
@@ -20,7 +21,7 @@ class IngestionReport:
             "valid_rows": self.valid_rows,
             "invalid_rows": self.invalid_rows,
             "duplicate_rows": self.duplicate_rows,
-            "success_rate": (self.valid_rows / self.total_rows * 100) if self.total_rows > 0 else 0.0
+            "success_rate": (self.valid_rows / self.total_rows * 100) if self.total_rows > 0 else 0.0,
         }
 
 

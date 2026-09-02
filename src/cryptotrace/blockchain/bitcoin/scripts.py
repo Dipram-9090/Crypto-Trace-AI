@@ -1,6 +1,7 @@
 """
 Bitcoin Script classification and opcode analysis.
 """
+
 from typing import Optional
 
 

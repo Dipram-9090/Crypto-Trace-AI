@@ -1,6 +1,7 @@
 """
 SHAP model explainability engine.
 """
+
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, List
@@ -29,12 +30,13 @@ FEATURE_EXPLANATIONS = {
     "graph_2hop_neighbors": "Dense 2-hop neighborhood in forensic graph",
     "graph_3hop_neighbors": "Broad 3-hop multi-layer network connectivity",
     "fee_ratio": "Abnormal transaction fee ratio",
-    "transaction_value": "High absolute transaction value"
+    "transaction_value": "High absolute transaction value",
 }
 
 
 class CryptoSHAPExplainer:
     """SHAP-based decision attribution engine."""
+
     def __init__(self, model: Any, feature_names: List[str]):
         self.model = getattr(model, "model", model)
         self.feature_names = feature_names
@@ -69,14 +71,16 @@ class CryptoSHAPExplainer:
         for feat, s_val, val in zip(self.feature_names, s_vals, vals):
             human_desc = FEATURE_EXPLANATIONS.get(feat, feat.replace("_", " ").title())
             direction = "increased_risk" if s_val > 0 else "decreased_risk"
-            contributions.append({
-                "feature": feat,
-                "description": human_desc,
-                "value": round(float(val), 4),
-                "shap_value": round(float(s_val), 4),
-                "direction": direction,
-                "magnitude": abs(float(s_val))
-            })
+            contributions.append(
+                {
+                    "feature": feat,
+                    "description": human_desc,
+                    "value": round(float(val), 4),
+                    "shap_value": round(float(s_val), 4),
+                    "direction": direction,
+                    "magnitude": abs(float(s_val)),
+                }
+            )
 
         contributions.sort(key=lambda x: x["magnitude"], reverse=True)
         return contributions[:top_k]

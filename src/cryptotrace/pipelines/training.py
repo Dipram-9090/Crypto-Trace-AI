@@ -2,6 +2,7 @@
 End-to-end multi-dataset training pipeline for CryptoTrace AI.
 Trains XGBoost, Isolation Forest, GraphSAGE, Behavioral Clustering, and BitcoinHeist Ransomware models.
 """
+
 import os
 import pandas as pd
 import numpy as np
@@ -22,7 +23,7 @@ logger = setup_logger(__name__)
 def run_training_pipeline(
     features_csv: str = "data/processed/features.csv",
     config_yaml: str = "configs/model.yaml",
-    models_dir: str = "models"
+    models_dir: str = "models",
 ):
     """Executes chronological split, multi-model fitting, and artifact serialization."""
     os.makedirs(os.path.join(models_dir, "xgboost"), exist_ok=True)
@@ -38,7 +39,18 @@ def run_training_pipeline(
     # Save to Parquet format
     write_parquet(df, "data/processed/features.parquet")
 
-    meta_cols = ["txid", "timestamp", "datetime", "src_ip", "dst_ip", "primary_wallet", "src_country", "src_asn", "label", "entity_type"]
+    meta_cols = [
+        "txid",
+        "timestamp",
+        "datetime",
+        "src_ip",
+        "dst_ip",
+        "primary_wallet",
+        "src_country",
+        "src_asn",
+        "label",
+        "entity_type",
+    ]
     feature_cols = [c for c in df.columns if c not in meta_cols]
 
     df_sup = df[df["label"].isin([0, 1])].reset_index(drop=True)
@@ -65,7 +77,7 @@ def run_training_pipeline(
         max_depth=xgb_cfg.get("max_depth", 6),
         learning_rate=xgb_cfg.get("learning_rate", 0.05),
         scale_pos_weight=xgb_cfg.get("scale_pos_weight", 10.0),
-        random_state=xgb_cfg.get("random_state", 42)
+        random_state=xgb_cfg.get("random_state", 42),
     )
     xgb_model.train(X_train, y_train, X_val, y_val)
     xgb_model.save(os.path.join(models_dir, "xgboost", "xgboost_model.pkl"))
@@ -76,7 +88,7 @@ def run_training_pipeline(
     if_model = CryptoIsolationForest(
         n_estimators=if_cfg.get("n_estimators", 150),
         contamination=if_cfg.get("contamination", 0.08),
-        random_state=if_cfg.get("random_state", 42)
+        random_state=if_cfg.get("random_state", 42),
     )
     if_model.train(X_train)
     if_model.save(os.path.join(models_dir, "isolation_forest", "isolation_forest.pkl"))
@@ -93,13 +105,7 @@ def run_training_pipeline(
     train_mask = np.zeros(len(df_sup), dtype=bool)
     train_mask[:train_end] = True
 
-    gnn_model = CryptoGraphSAGE(
-        in_channels=len(feature_cols),
-        hidden_channels=64,
-        out_channels=2,
-        lr=0.005,
-        epochs=30
-    )
+    gnn_model = CryptoGraphSAGE(in_channels=len(feature_cols), hidden_channels=64, out_channels=2, lr=0.005, epochs=30)
     gnn_model.train(G, node_list, features_mat, labels_arr, train_mask)
     gnn_model.save(os.path.join(models_dir, "graphsage", "graphsage.pt"))
 

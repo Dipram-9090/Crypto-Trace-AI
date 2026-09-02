@@ -2,6 +2,7 @@
 Network Telemetry Synthesizer & Public Dataset Bridge.
 Enriches public blockchain datasets (Elliptic, Elliptic++, BitcoinHeist) with realistic P2P network-layer observations.
 """
+
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
@@ -15,12 +16,13 @@ IP_POOLS = {
     "suspicious": ["185.220.101.5", "185.220.101.9", "45.154.255.88", "198.51.100.24", "91.240.118.50"],
     "exchange": ["51.15.89.2", "104.244.72.115", "104.244.72.116", "178.62.204.10", "119.81.100.40"],
     "miner": ["103.21.244.2", "103.21.244.5", "51.15.89.100"],
-    "normal": ["104.244.72.1", "178.62.204.5", "103.21.244.10", "119.81.100.10", "51.15.89.50"]
+    "normal": ["104.244.72.1", "178.62.204.5", "103.21.244.10", "119.81.100.10", "51.15.89.50"],
 }
 
 
 class NetworkObservationBridge:
     """Bridges transaction IDs with realistic P2P network transmission events."""
+
     def __init__(self, geoip: Optional[GeoIPLookup] = None):
         self.geoip = geoip or GeoIPLookup()
 
@@ -59,18 +61,20 @@ class NetworkObservationBridge:
             geo_info = self.geoip.lookup(src_ip)
 
             rec = row.to_dict()
-            rec.update({
-                "txid": txid,
-                "timestamp": tx_time.strftime("%Y-%m-%d %H:%M:%S"),
-                "datetime": tx_time,
-                "src_ip": src_ip,
-                "dst_ip": dst_ip,
-                "src_port": src_port,
-                "dst_port": dst_port,
-                "src_country": geo_info.country,
-                "src_asn": geo_info.asn,
-                "entity_type": entity_archetype
-            })
+            rec.update(
+                {
+                    "txid": txid,
+                    "timestamp": tx_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "datetime": tx_time,
+                    "src_ip": src_ip,
+                    "dst_ip": dst_ip,
+                    "src_port": src_port,
+                    "dst_port": dst_port,
+                    "src_country": geo_info.country,
+                    "src_asn": geo_info.asn,
+                    "entity_type": entity_archetype,
+                }
+            )
             enriched_rows.append(rec)
 
         return pd.DataFrame(enriched_rows)

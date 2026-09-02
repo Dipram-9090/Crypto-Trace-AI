@@ -1,6 +1,7 @@
 """
 Unit tests for Parquet storage and DuckDB Query Engine.
 """
+
 import os
 import tempfile
 import pandas as pd
@@ -24,16 +25,18 @@ def test_parquet_io():
 
 
 def test_duckdb_engine():
-    df = pd.DataFrame({
-        "primary_wallet": ["W1", "W1", "W2"],
-        "txid": ["T1", "T2", "T3"],
-        "transaction_value": [1.0, 2.0, 0.5],
-        "fee": [0.01, 0.01, 0.005],
-        "src_ip": ["1.1.1.1", "1.1.1.1", "2.2.2.2"],
-        "src_country": ["US", "US", "DE"],
-        "src_asn": ["AS1", "AS1", "AS2"],
-        "composite_risk_score": [50.0, 70.0, 20.0]
-    })
+    df = pd.DataFrame(
+        {
+            "primary_wallet": ["W1", "W1", "W2"],
+            "txid": ["T1", "T2", "T3"],
+            "transaction_value": [1.0, 2.0, 0.5],
+            "fee": [0.01, 0.01, 0.005],
+            "src_ip": ["1.1.1.1", "1.1.1.1", "2.2.2.2"],
+            "src_country": ["US", "US", "DE"],
+            "src_asn": ["AS1", "AS1", "AS2"],
+            "composite_risk_score": [50.0, 70.0, 20.0],
+        }
+    )
     engine = DuckDBQueryEngine()
     engine.register_dataframe("transactions", df)
 

@@ -1,6 +1,7 @@
 """
 Unit tests for UTXO set management.
 """
+
 from src.cryptotrace.blockchain.bitcoin.utxo import UTXOSet
 
 

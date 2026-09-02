@@ -3,6 +3,7 @@ GeoIP and ASN enrichment engine for CryptoTrace AI.
 Provides local, offline IP intelligence with LRU caching, graceful fallback,
 and forensic disclaimers.
 """
+
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
 import ipaddress
@@ -38,22 +39,122 @@ class GeoIPInfo:
             "asn_org": self.asn_org,
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "is_proxy_or_vpn": self.is_proxy_or_vpn
+            "is_proxy_or_vpn": self.is_proxy_or_vpn,
         }
 
 
 # Known deterministic fallback clusters for offline testing/research
 OFFLINE_GEO_TABLE = [
-    {"prefix": "185.", "country": "Netherlands", "code": "NL", "continent": "Europe", "asn": "AS13335", "org": "Cloudflare Nether", "lat": 52.37, "lon": 4.89, "proxy": True},
-    {"prefix": "51.", "country": "Germany", "code": "DE", "continent": "Europe", "asn": "AS24940", "org": "Hetzner Online", "lat": 50.11, "lon": 8.68, "proxy": False},
-    {"prefix": "104.", "country": "United States", "code": "US", "continent": "North America", "asn": "AS16509", "org": "Amazon AWS US", "lat": 38.00, "lon": -97.00, "proxy": False},
-    {"prefix": "45.", "country": "Switzerland", "code": "CH", "continent": "Europe", "asn": "AS51167", "org": "Contabo Europe", "lat": 47.37, "lon": 8.54, "proxy": True},
-    {"prefix": "194.", "country": "Russia", "code": "RU", "continent": "Europe", "asn": "AS12389", "org": "Rostelecom", "lat": 55.75, "lon": 37.61, "proxy": False},
-    {"prefix": "103.", "country": "India", "code": "IN", "continent": "Asia", "asn": "AS55836", "org": "Reliance Jio", "lat": 19.07, "lon": 72.87, "proxy": False},
-    {"prefix": "178.", "country": "United Kingdom", "code": "GB", "continent": "Europe", "asn": "AS2856", "org": "BT Group", "lat": 51.50, "lon": -0.12, "proxy": False},
-    {"prefix": "119.", "country": "Singapore", "code": "SG", "continent": "Asia", "asn": "AS4657", "org": "StarHub Internet", "lat": 1.35, "lon": 103.81, "proxy": False},
-    {"prefix": "198.", "country": "Panama", "code": "PA", "continent": "North America", "asn": "AS27773", "org": "Offshore Hosting PA", "lat": 8.98, "lon": -79.52, "proxy": True},
-    {"prefix": "91.", "country": "Seychelles", "code": "SC", "continent": "Africa", "asn": "AS36997", "org": "Telecom Seychelles", "lat": -4.67, "lon": 55.49, "proxy": True},
+    {
+        "prefix": "185.",
+        "country": "Netherlands",
+        "code": "NL",
+        "continent": "Europe",
+        "asn": "AS13335",
+        "org": "Cloudflare Nether",
+        "lat": 52.37,
+        "lon": 4.89,
+        "proxy": True,
+    },
+    {
+        "prefix": "51.",
+        "country": "Germany",
+        "code": "DE",
+        "continent": "Europe",
+        "asn": "AS24940",
+        "org": "Hetzner Online",
+        "lat": 50.11,
+        "lon": 8.68,
+        "proxy": False,
+    },
+    {
+        "prefix": "104.",
+        "country": "United States",
+        "code": "US",
+        "continent": "North America",
+        "asn": "AS16509",
+        "org": "Amazon AWS US",
+        "lat": 38.00,
+        "lon": -97.00,
+        "proxy": False,
+    },
+    {
+        "prefix": "45.",
+        "country": "Switzerland",
+        "code": "CH",
+        "continent": "Europe",
+        "asn": "AS51167",
+        "org": "Contabo Europe",
+        "lat": 47.37,
+        "lon": 8.54,
+        "proxy": True,
+    },
+    {
+        "prefix": "194.",
+        "country": "Russia",
+        "code": "RU",
+        "continent": "Europe",
+        "asn": "AS12389",
+        "org": "Rostelecom",
+        "lat": 55.75,
+        "lon": 37.61,
+        "proxy": False,
+    },
+    {
+        "prefix": "103.",
+        "country": "India",
+        "code": "IN",
+        "continent": "Asia",
+        "asn": "AS55836",
+        "org": "Reliance Jio",
+        "lat": 19.07,
+        "lon": 72.87,
+        "proxy": False,
+    },
+    {
+        "prefix": "178.",
+        "country": "United Kingdom",
+        "code": "GB",
+        "continent": "Europe",
+        "asn": "AS2856",
+        "org": "BT Group",
+        "lat": 51.50,
+        "lon": -0.12,
+        "proxy": False,
+    },
+    {
+        "prefix": "119.",
+        "country": "Singapore",
+        "code": "SG",
+        "continent": "Asia",
+        "asn": "AS4657",
+        "org": "StarHub Internet",
+        "lat": 1.35,
+        "lon": 103.81,
+        "proxy": False,
+    },
+    {
+        "prefix": "198.",
+        "country": "Panama",
+        "code": "PA",
+        "continent": "North America",
+        "asn": "AS27773",
+        "org": "Offshore Hosting PA",
+        "lat": 8.98,
+        "lon": -79.52,
+        "proxy": True,
+    },
+    {
+        "prefix": "91.",
+        "country": "Seychelles",
+        "code": "SC",
+        "continent": "Africa",
+        "asn": "AS36997",
+        "org": "Telecom Seychelles",
+        "lat": -4.67,
+        "lon": 55.49,
+        "proxy": True,
+    },
 ]
 
 
@@ -61,6 +162,7 @@ class GeoIPLookup:
     """
     Offline-capable GeoIP resolver with LRU caching and MaxMind integration.
     """
+
     def __init__(self, city_db_path: Optional[str] = None, asn_db_path: Optional[str] = None):
         self.city_db_path = city_db_path
         self.asn_db_path = asn_db_path
@@ -73,6 +175,7 @@ class GeoIPLookup:
         """Attempt to load official MaxMind mmdb reader if files exist and library is installed."""
         try:
             import geoip2.database
+
             if self.city_db_path:
                 self._reader_city = geoip2.database.Reader(self.city_db_path)
             if self.asn_db_path:
@@ -106,7 +209,7 @@ class GeoIPLookup:
                     asn_org="Private Subnet",
                     latitude=0.0,
                     longitude=0.0,
-                    is_proxy_or_vpn=False
+                    is_proxy_or_vpn=False,
                 )
                 self._cache[clean_ip] = res
                 return res
@@ -131,7 +234,7 @@ class GeoIPLookup:
                     asn_org=asn_resp.autonomous_system_organization if asn_resp else "Unknown",
                     latitude=float(city_resp.location.latitude or 0.0),
                     longitude=float(city_resp.location.longitude or 0.0),
-                    is_proxy_or_vpn=False
+                    is_proxy_or_vpn=False,
                 )
                 self._cache[clean_ip] = res
                 return res
@@ -152,7 +255,7 @@ class GeoIPLookup:
                     asn_org=item["org"],
                     latitude=item["lat"],
                     longitude=item["lon"],
-                    is_proxy_or_vpn=item["proxy"]
+                    is_proxy_or_vpn=item["proxy"],
                 )
                 self._cache[clean_ip] = res
                 return res
@@ -171,7 +274,7 @@ class GeoIPLookup:
             asn_org=fallback_item["org"],
             latitude=fallback_item["lat"] + ((h % 100) / 500.0),
             longitude=fallback_item["lon"] + (((h >> 8) % 100) / 500.0),
-            is_proxy_or_vpn=fallback_item["proxy"]
+            is_proxy_or_vpn=fallback_item["proxy"],
         )
         self._cache[clean_ip] = res
         return res

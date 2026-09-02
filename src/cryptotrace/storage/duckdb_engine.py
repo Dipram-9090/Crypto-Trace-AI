@@ -1,9 +1,11 @@
 """
 DuckDB Analytical Query Engine for Forensic Transactions and Parquet data.
 """
+
 import os
 from typing import Optional, Dict, Any, List
 import pandas as pd
+
 try:
     import duckdb
 except ImportError:
@@ -16,6 +18,7 @@ logger = setup_logger(__name__)
 
 class DuckDBQueryEngine:
     """Embedded columnar analytical query engine for fast entity aggregations and forensic queries."""
+
     def __init__(self, db_path: str = ":memory:"):
         self.db_path = db_path
         self.conn = duckdb.connect(db_path) if duckdb is not None else None

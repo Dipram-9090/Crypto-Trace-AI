@@ -1,6 +1,7 @@
 """
 Multi-modal Risk Scoring Engine.
 """
+
 import numpy as np
 import pandas as pd
 from typing import Optional
@@ -9,6 +10,7 @@ from src.cryptotrace.utils.io import load_yaml
 
 class RiskEngine:
     """Combines Supervised ML, Anomaly Detection, Graph Topology, and Behavioral Evidence."""
+
     def __init__(
         self,
         w_ml: float = 0.50,
@@ -17,7 +19,7 @@ class RiskEngine:
         w_behavioral: float = 0.10,
         threshold_low: float = 30.0,
         threshold_medium: float = 60.0,
-        threshold_high: float = 80.0
+        threshold_high: float = 80.0,
     ):
         self.w_ml = w_ml
         self.w_anomaly = w_anomaly
@@ -35,14 +37,18 @@ class RiskEngine:
             w_ml=weights.get("ml_score", 0.50),
             w_anomaly=weights.get("anomaly_score", 0.20),
             w_graph=weights.get("graph_score", 0.20),
-            w_behavioral=weights.get("behavioral_score", 0.10)
+            w_behavioral=weights.get("behavioral_score", 0.10),
         )
 
     def classify_risk_tier(self, score: float) -> str:
-        if score >= self.threshold_high: return "CRITICAL"
-        elif score >= self.threshold_medium: return "HIGH"
-        elif score >= self.threshold_low: return "MEDIUM"
-        else: return "LOW"
+        if score >= self.threshold_high:
+            return "CRITICAL"
+        elif score >= self.threshold_medium:
+            return "HIGH"
+        elif score >= self.threshold_low:
+            return "MEDIUM"
+        else:
+            return "LOW"
 
     def compute_behavioral_score(self, row: pd.Series) -> float:
         burst = float(row.get("burst_score", 0.0)) * 35.0
@@ -56,7 +62,7 @@ class RiskEngine:
         anomaly_score: float,
         graph_score: float,
         row_series: Optional[pd.Series] = None,
-        behavioral_score: Optional[float] = None
+        behavioral_score: Optional[float] = None,
     ) -> tuple[float, str]:
         ml_scaled = np.clip(ml_prob * 100.0, 0.0, 100.0)
         anom_scaled = np.clip(anomaly_score, 0.0, 100.0)
@@ -70,10 +76,10 @@ class RiskEngine:
             behav_scaled = 0.0
 
         final_score = (
-            self.w_ml * ml_scaled +
-            self.w_anomaly * anom_scaled +
-            self.w_graph * graph_scaled +
-            self.w_behavioral * behav_scaled
+            self.w_ml * ml_scaled
+            + self.w_anomaly * anom_scaled
+            + self.w_graph * graph_scaled
+            + self.w_behavioral * behav_scaled
         )
         final_score = float(np.clip(round(final_score, 1), 0.0, 100.0))
         tier = self.classify_risk_tier(final_score)

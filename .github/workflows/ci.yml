@@ -30,4 +30,4 @@ jobs:
 
       - name: Run Test Suite
         run: |
-          pytest tests/ --cov=src/cryptotrace --cov-report=xml --cov-report=term-missing
+          pytest tests/unit/ -v

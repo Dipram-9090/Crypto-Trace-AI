@@ -1,12 +1,14 @@
 """
 Investigative Alert Generator & Machine-Readable Evidence Builder.
 """
+
 from typing import Dict, Any, List
 import pandas as pd
 
 
 class AlertGenerator:
     """Formats forensic dossiers and generates prioritized alert objects."""
+
     @staticmethod
     def create_alert(
         alert_idx: int,
@@ -14,7 +16,7 @@ class AlertGenerator:
         composite_score: float,
         risk_level: str,
         confidence: float,
-        top_factors: List[Dict[str, Any]]
+        top_factors: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         return {
             "alert_id": f"ALERT_{alert_idx:04d}",
@@ -30,5 +32,5 @@ class AlertGenerator:
             "src_country": str(row.get("src_country", "N/A")),
             "src_asn": str(row.get("src_asn", "N/A")),
             "timestamp": str(row.get("timestamp", "N/A")),
-            "top_features": top_factors
+            "top_features": top_factors,
         }

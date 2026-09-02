@@ -2,6 +2,7 @@
 Multi-modal Risk Scoring Engine for CryptoTrace AI.
 Combines Supervised ML, Unsupervised Anomaly Detection, Graph Topology, and Behavioral Evidence.
 """
+
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, List, Optional
@@ -15,6 +16,7 @@ class RiskEngine:
     """
     Computes composite risk scores from multi-modal analytical layers.
     """
+
     def __init__(
         self,
         w_ml: float = 0.50,
@@ -23,7 +25,7 @@ class RiskEngine:
         w_behavioral: float = 0.10,
         threshold_low: float = 30.0,
         threshold_medium: float = 60.0,
-        threshold_high: float = 80.0
+        threshold_high: float = 80.0,
     ):
         self.w_ml = w_ml
         self.w_anomaly = w_anomaly
@@ -44,7 +46,7 @@ class RiskEngine:
                 w_ml=weights.get("ml_score", 0.50),
                 w_anomaly=weights.get("anomaly_score", 0.20),
                 w_graph=weights.get("graph_score", 0.20),
-                w_behavioral=weights.get("behavioral_score", 0.10)
+                w_behavioral=weights.get("behavioral_score", 0.10),
             )
         except Exception as e:
             logger.warning(f"Could not load config file ({e}), using default weights.")
@@ -76,7 +78,7 @@ class RiskEngine:
         anomaly_score: float,
         graph_score: float,
         row_series: Optional[pd.Series] = None,
-        behavioral_score: Optional[float] = None
+        behavioral_score: Optional[float] = None,
     ) -> tuple[float, str]:
         """
         Compute final composite risk score (0-100) and risk level classification.
@@ -93,10 +95,10 @@ class RiskEngine:
             behav_scaled = 0.0
 
         final_score = (
-            self.w_ml * ml_scaled +
-            self.w_anomaly * anom_scaled +
-            self.w_graph * graph_scaled +
-            self.w_behavioral * behav_scaled
+            self.w_ml * ml_scaled
+            + self.w_anomaly * anom_scaled
+            + self.w_graph * graph_scaled
+            + self.w_behavioral * behav_scaled
         )
         final_score = float(np.clip(round(final_score, 1), 0.0, 100.0))
         tier = self.classify_risk_tier(final_score)
