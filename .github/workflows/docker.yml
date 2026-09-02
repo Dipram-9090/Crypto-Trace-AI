@@ -1,0 +1,20 @@
+name: Docker Build & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t cryptotrace-ai:test .
+
+      - name: Verify Container Health
+        run: |
+          docker run --rm cryptotrace-ai:test python -c "import cryptotrace; print('CryptoTrace AI container OK')"

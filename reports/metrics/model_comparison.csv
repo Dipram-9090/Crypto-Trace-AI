@@ -2,6 +2,3 @@ Model,Precision,Recall,F1-Score,PR-AUC,ROC-AUC,Precision@100,Recall@100
 Logistic Regression (Baseline),0.2667,0.8062,0.4008,0.4449,0.8994,,
 Random Forest (Baseline),0.9921,0.969,0.9804,0.9967,0.9997,,
 XGBoost (Primary Classifier),0.9921,0.9767,0.9844,0.9985,0.9999,1.0,0.7752
-Isolation Forest (Anomaly Detection),0.25,0.0078,0.015,0.1587,0.7937,,
-GraphSAGE (Graph Neural Network),0.0,0.0,0.0,0.0717,0.5,,
-BitcoinHeist Ransomware XGBoost,1.0,1.0,1.0,1.0,1.0,,

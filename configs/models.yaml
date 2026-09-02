@@ -1,0 +1,52 @@
+# Machine Learning & Graph Neural Network Hyperparameters
+xgboost:
+  n_estimators: 200
+  max_depth: 6
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  scale_pos_weight: 10.0
+  random_state: 42
+  eval_metric: aucpr
+
+random_forest:
+  n_estimators: 150
+  max_depth: 8
+  class_weight: balanced
+  random_state: 42
+
+isolation_forest:
+  n_estimators: 150
+  contamination: 0.08
+  random_state: 42
+
+graphsage:
+  hidden_channels: 64
+  out_channels: 2
+  learning_rate: 0.005
+  epochs: 35
+  dropout: 0.2
+  weight_decay: 0.0005
+
+gcn:
+  hidden_channels: 64
+  epochs: 30
+  lr: 0.01
+
+gat:
+  hidden_channels: 32
+  heads: 4
+  epochs: 30
+  lr: 0.005
+
+clustering:
+  algorithm: dbscan
+  eps: 1.5
+  min_samples: 5
+  n_pca_components: 2
+
+ransomware:
+  n_estimators: 120
+  max_depth: 5
+  learning_rate: 0.05
+  random_state: 42

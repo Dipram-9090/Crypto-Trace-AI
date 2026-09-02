@@ -1,0 +1,32 @@
+# Data Ingestion and Dataset Management Configuration
+raw_datasets:
+  elliptic:
+    path: data/raw/elliptic
+    features_file: elliptic_txs_features.csv
+    classes_file: elliptic_txs_classes.csv
+    edgelist_file: elliptic_txs_edgelist.csv
+  ellipticpp:
+    path: data/raw/ellipticpp
+    txs_features: txs_features.csv
+    wallets_features: wallets_features.csv
+    addr_tx_edges: AddrTx_edgelist.csv
+    tx_addr_edges: TxAddr_edgelist.csv
+    addr_addr_edges: AddrAddr_edgelist.csv
+  bitcoinheist:
+    path: data/raw/bitcoinheist
+    data_file: BitcoinHeistData.csv
+  geoip:
+    path: data/external/geoip
+    city_db: GeoLite2-City.mmdb
+    asn_db: GeoLite2-ASN.mmdb
+
+synthetic:
+  transactions_dir: data/synthetic/transactions
+  network_dir: data/synthetic/network
+  profiles_dir: data/synthetic/profiles
+
+storage:
+  processed_dir: data/processed
+  interim_dir: data/interim
+  format: parquet
+  compression: snappy
