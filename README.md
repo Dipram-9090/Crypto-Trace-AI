@@ -18,7 +18,20 @@
 [![XGBoost](https://img.shields.io/badge/XGBoost-Fraud%20Classification-orange?style=flat-square)](https://xgboost.readthedocs.io/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
 
+<br/>
+
+[![Presentation Deck](https://img.shields.io/badge/Presentation-CryptoTrace--AI.pptx-D04423?style=flat-square&logo=microsoftpowerpoint&logoColor=white)](CryptoTrace-AI.pptx)
+[![Project Report](https://img.shields.io/badge/Project%20Report-CryptoTrace--AI.pdf-EC1C24?style=flat-square&logo=adobeacrobatreader&logoColor=white)](CryptoTrace-AI.pdf)
+
+<br/>
+
 **An enterprise-grade, multi-chain blockchain forensics, fraud detection, and multi-hop transaction tracing platform powered by Graph Neural Networks (GNN), Gradient Boosted Trees, Unsupervised Anomaly Detectors, and Explainable AI (SHAP & LIME).**
+
+<br/>
+
+> 📌 **Key Project Resources:**
+> - 📊 **Presentation Deck:** [`CryptoTrace-AI.pptx`](CryptoTrace-AI.pptx)
+> - 📄 **Comprehensive Whitepaper & Report:** [`CryptoTrace-AI.pdf`](CryptoTrace-AI.pdf)
 
 </div>
 
