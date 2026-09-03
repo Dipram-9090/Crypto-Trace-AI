@@ -1,4 +1,4 @@
-# Crypto-Trace-AI: AI-Powered Blockchain Forensic & Fraud Detection Platform
+# CryptoTrace AI: AI-Powered Blockchain Forensic & Fraud Detection Platform
 
 <div align="center">
 
