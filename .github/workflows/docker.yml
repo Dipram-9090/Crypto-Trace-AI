@@ -17,4 +17,4 @@ jobs:
 
       - name: Verify Container Health
         run: |
-          docker run --rm cryptotrace-ai:test python -c "import cryptotrace; print('CryptoTrace AI container OK')"
+          docker run --rm --entrypoint python cryptotrace-ai:test -c "import cryptotrace; print('CryptoTrace AI container OK')"

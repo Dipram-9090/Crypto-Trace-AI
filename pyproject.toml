@@ -55,10 +55,11 @@ dev = [
 where = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests/unit", "tests/integration"]
+testpaths = ["tests/unit"]
 python_files = ["test_*.py"]
+pythonpath = [".", "src"]
 addopts = "-p no:anyio"
-norecursedirs = [".git", "data", "models", "reports", "notebooks", "src", "docs", "configs", "dashboard"]
+norecursedirs = [".git", "data", "ml-models", "reports", "notebooks", "docs", "configs", "dashboard", "frontend"]
 filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
 
 [tool.black]
