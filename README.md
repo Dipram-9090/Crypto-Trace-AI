@@ -34,21 +34,25 @@
    - [AI/ML Multi-Model Ensemble Architecture](#aiml-multi-model-ensemble-architecture)
 3. [Technology Stack](#technology-stack)
 4. [Repository Structure](#repository-structure)
-5. [AI & Machine Learning Engine](#ai--machine-learning-engine)
+5. [ML Pipeline — Complete Guide](#ml-pipeline--complete-guide)
+   - [Overview](#overview)
+   - [Quick Start](#quick-start)
+   - [Key Features](#key-features)
+6. [AI & Machine Learning Engine](#ai--machine-learning-engine)
    - [Supervised Fraud Classification (XGBoost / LightGBM)](#supervised-fraud-classification-xgboost--lightgbm)
    - [Graph Neural Networks (GraphSAGE & PyG)](#graph-neural-networks-graphsage--pyg)
    - [Unsupervised Anomaly Detection (Isolation Forest & Autoencoders)](#unsupervised-anomaly-detection-isolation-forest--autoencoders)
    - [Explainable AI (SHAP, LIME & Narrative SAR)](#explainable-ai-shap-lime--narrative-sar)
-6. [Blockchain Ingestion & Analytics](#blockchain-ingestion--analytics)
+7. [Blockchain Ingestion & Analytics](#blockchain-ingestion--analytics)
    - [Supported Blockchains](#supported-blockchains)
    - [Heuristics & Sanctions Screening](#heuristics--sanctions-screening)
-7. [REST & WebSocket API Reference](#rest--websocket-api-reference)
-8. [Getting Started & Deployment](#getting-started--deployment)
+8. [REST & WebSocket API Reference](#rest--websocket-api-reference)
+9. [Getting Started & Deployment](#getting-started--deployment)
    - [Prerequisites](#prerequisites)
    - [Docker Compose Deployment (Recommended)](#docker-compose-deployment-recommended)
    - [Local Development Setup](#local-development-setup)
-9. [Automated Verification & Tests](#automated-verification--tests)
-10. [Compliance & SAR Generation](#compliance--sar-generation)
+10. [Automated Verification & Tests](#automated-verification--tests)
+11. [Compliance & SAR Generation](#compliance--sar-generation)
 
 ---
 
@@ -321,6 +325,147 @@ Crypto-Trace-AI/
 ├── .env.example                # Environment variable configuration template
 └── README.md                   # System documentation
 ```
+
+---
+
+## ML Pipeline — Complete Guide
+
+### Overview
+
+CryptoTrace AI's production ML pipeline provides enterprise-grade machine learning for Bitcoin forensic investigation:
+
+**✅ Datasets**:
+- Elliptic: 203,769 Bitcoin transactions with ground truth labels (licit/illicit)
+- BitcoinHeist: 2.5M Bitcoin addresses with ransomware family labels
+
+**✅ Models**:
+- Isolation Forest (unsupervised anomaly detection)
+- Random Forest / XGBoost (supervised classification)
+- GraphSAGE (graph neural network for relational patterns)
+- Ensemble (weighted voting for production accuracy)
+
+**✅ Risk Scoring**: 0-100 normalized scale with investigation priority levels (LOW/MODERATE/ELEVATED/HIGH/CRITICAL)
+
+**✅ Explainability**: SHAP/LIME feature attribution + human-readable investigation signals
+
+**✅ Offline-First**: Complete inference works without internet after model initialization
+
+### Quick Start
+
+```bash
+# 1. Download datasets
+python scripts/download_datasets.py --dataset all
+
+# 2. Validate data integrity
+python scripts/validate_datasets.py --dataset all
+
+# 3. Train models
+python scripts/train.py --model ensemble --dataset elliptic
+
+# 4. Evaluate performance
+python scripts/evaluate.py --model elliptic_ensemble --dataset elliptic
+
+# 5. Run inference
+python scripts/predict.py --input data/transactions.csv --model ensemble --output reports/
+```
+
+### Complete Documentation
+
+For comprehensive documentation, datasets, models, API integration, and troubleshooting:
+
+📖 **[ML Pipeline Guide](ai_ml/PIPELINE.md)** — Full system architecture, component details, and deployment guide
+📊 **[Datasets Guide](ai_ml/datasets/README.md)** — Download instructions, validation, and dataset specifications
+
+### Key Features
+
+#### Risk Scoring
+```
+Transaction Features → ML Models → Ensemble Vote → Risk Score [0-100]
+                           ↓
+                    Investigation Signals ← SHAP/LIME Explanation
+```
+
+**Risk Levels**:
+- **LOW** (0-20): Routine monitoring
+- **MODERATE** (21-40): Standard review  
+- **ELEVATED** (41-60): Heightened review
+- **HIGH** (61-80): Urgent investigation
+- **CRITICAL** (81-100): Immediate action
+
+#### Backend API Integration
+
+Add to `backend/main.py`:
+```python
+from backend.routes.ml_routes import include_ml_routes
+
+app = FastAPI()
+include_ml_routes(app)
+```
+
+**Available Endpoints**:
+- `POST /api/ml/analyze` — Analyze transactions, get risk scores
+- `GET /api/ml/models` — List available models and metrics
+- `GET /api/ml/health` — Health check
+- `POST /api/ml/batch/analyze` — Batch processing with chunking
+
+#### Model Management
+```python
+from ai_ml.src.models.model_registry import ModelRegistry
+
+registry = ModelRegistry("ai_ml/models")
+model, metadata = registry.load_model("elliptic_ensemble")
+```
+
+#### Risk Score Response
+```json
+{
+  "entity_id": "TX123456",
+  "risk_score": 82,
+  "risk_level": "HIGH",
+  "investigation_signals": [
+    "High transaction velocity",
+    "Fund dispersion pattern detected"
+  ],
+  "top_features": ["fund_dispersion", "transaction_velocity"],
+  "model_version": "ensemble_v1.0",
+  "confidence": 0.92
+}
+```
+
+### Important: Legal Disclaimer
+
+> **CryptoTrace AI provides analytical risk indicators and investigation leads. It does not identify individuals, establish criminality, or make definitive determinations. All final decisions rest with qualified human investigators.**
+
+⚠️ Risk scores indicate **investigation priority**, NOT guilt or criminality.
+
+### Architecture
+
+Data Pipeline:
+```
+Raw Data → Validation → Preprocessing → Feature Engineering → ML Models → Risk Scoring → API Response
+```
+
+Models:
+```
+Isolation Forest (Unsupervised) ─┐
+Random Forest (Supervised)        ├→ Ensemble Voting → Risk Score [0,100]
+XGBoost (Supervised)              │
+GraphSAGE GNN (Relational)       ─┘
+```
+
+### Testing
+
+```bash
+pytest ai_ml/tests/ -v --cov=ai_ml
+```
+
+### Contributing
+
+To extend the pipeline, follow the modular architecture:
+- Add new models in `ai_ml/src/models/`
+- Add features in `ai_ml/src/data/feature_engineering.py`
+- Add datasets in `ai_ml/src/data/loaders.py`
+- Add API endpoints in `backend/routes/ml_routes.py`
 
 ---
 
