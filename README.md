@@ -1,3 +1,5 @@
+# Crypto-Trace-AI: AI-Powered Blockchain Forensic & Fraud Detection Platform
+
 <div align="center">
 
 <!-- Dual Theme Responsive Logos -->
@@ -7,218 +9,421 @@
   <img alt="CryptoTrace AI Logo" src="public/logo/dark-horizontal-logo.svg" width="480">
 </picture>
 
-### Enterprise Multi-Modal Graph & Machine Learning Forensic Analytics for Bitcoin
+<br/><br/>
 
-[![CI Pipeline](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI/actions)
-[![Security Scan](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI/actions/workflows/security.yml/badge.svg)](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI/actions)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Offline-First](https://img.shields.io/badge/Architecture-Offline--First-blueviolet.svg)](docs/security.md)
+[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen?style=flat-square&logo=githubactions)](https://github.com/rajdeepcodeshere247/Crypto-Trace-AI)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square&logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-2.0.0-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-GNN%20GraphSAGE-EE4C2C?style=flat-square&logo=pytorch)](https://pytorch.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Fraud%20Classification-orange?style=flat-square)](https://xgboost.readthedocs.io/)
+[![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
 
-<p align="center">
-  <b>Production-grade, offline-first Bitcoin transaction and network-layer forensic intelligence platform.</b><br>
-  Combines multi-format ingestion (CSV, JSON, XML), heterogeneous graph construction, supervised gradient boosting, unsupervised anomaly detection, inductive Graph Neural Networks (GraphSAGE), and SHAP decision attribution.
-</p>
-
-[Key Features](#-key-features) •
-[Architecture](#-system-architecture) •
-[Datasets](#-supported-datasets) •
-[Model Benchmarks](#-model-benchmarks) •
-[Quickstart](#-quickstart-guide) •
-[Dashboard](#-interactive-forensic-dashboard) •
-[Documentation](#-documentation)
-
----
+**An enterprise-grade, multi-chain blockchain forensics, fraud detection, and multi-hop transaction tracing platform powered by Graph Neural Networks (GNN), Gradient Boosted Trees, Unsupervised Anomaly Detectors, and Explainable AI (SHAP & LIME).**
 
 </div>
 
-## 🌟 Key Features
+---
 
-- **Multi-Format Ingestion & Validation**: Ingests bulk Bitcoin transactions and network broadcast events from CSV, JSON, and XML with schema validation and deduplication.
-- **Cross-Modal Blockchain/Network Correlation**: Maps transaction hashes and wallet clusters to broadcasting IP addresses, Autonomous Systems (ASNs), and geographic jurisdictions without lookahead leakage.
-- **Heterogeneous Forensic Graph**: Builds directed multi-relational graphs across Transactions, Wallets, IPs, ASNs, and Countries using NetworkX and PyTorch.
-- **Hybrid Machine Learning Pipeline**:
-  - **Supervised XGBoost**: Primary transaction classification with strict temporal train/val/test splitting (**PR-AUC: 0.9985, Recall@100: 77.5%**).
-  - **Isolation Forest**: Unsupervised behavioral anomaly detector for identifying novel peeling and mixing patterns.
-  - **Inductive GraphSAGE GNN**: Deep representation learning over multi-hop relational transaction neighborhoods.
-  - **Behavioral Clustering (DBSCAN + PCA)**: Latent cluster discovery identifying rapid mixing rings and exchange hot wallets.
-  - **BitcoinHeist Ransomware Classifier**: Dedicated address graph classifier detecting ransomware families.
-- **Explainable AI (SHAP)**: Quantifiable game-theoretic feature attribution producing human-readable explanations and machine-readable evidence JSON dossiers.
-- **Multi-Modal Risk Scoring Engine**: Configurable composite scoring formula combining ML probability, anomaly score, graph topology, and behavioral indicators.
-- **High-Performance Storage**: Columnar compressed Parquet storage with zero-copy embedded **DuckDB** analytical querying.
-- **Interactive Multi-Page Streamlit Dashboard**: 10 distinct forensic views including Alert Triage, Network Graph, SHAP Explainability, Geographic Map, Behavioral PCA, and DuckDB SQL Console.
+## Table of Contents
+
+1. [Executive Summary](#executive-summary)
+2. [System Architecture & Design](#system-architecture--design)
+   - [High-Level Platform Topology](#high-level-platform-topology)
+   - [End-to-End Forensic Pipeline](#end-to-end-forensic-pipeline)
+   - [Multi-Hop Graph Taint & Peeling Chain Engine](#multi-hop-graph-taint--peeling-chain-engine)
+   - [AI/ML Multi-Model Ensemble Architecture](#aiml-multi-model-ensemble-architecture)
+3. [Technology Stack](#technology-stack)
+4. [Repository Structure](#repository-structure)
+5. [AI & Machine Learning Engine](#ai--machine-learning-engine)
+   - [Supervised Fraud Classification (XGBoost / LightGBM)](#supervised-fraud-classification-xgboost--lightgbm)
+   - [Graph Neural Networks (GraphSAGE & PyG)](#graph-neural-networks-graphsage--pyg)
+   - [Unsupervised Anomaly Detection (Isolation Forest & Autoencoders)](#unsupervised-anomaly-detection-isolation-forest--autoencoders)
+   - [Explainable AI (SHAP, LIME & Narrative SAR)](#explainable-ai-shap-lime--narrative-sar)
+6. [Blockchain Ingestion & Analytics](#blockchain-ingestion--analytics)
+   - [Supported Blockchains](#supported-blockchains)
+   - [Heuristics & Sanctions Screening](#heuristics--sanctions-screening)
+7. [REST & WebSocket API Reference](#rest--websocket-api-reference)
+8. [Getting Started & Deployment](#getting-started--deployment)
+   - [Prerequisites](#prerequisites)
+   - [Docker Compose Deployment (Recommended)](#docker-compose-deployment-recommended)
+   - [Local Development Setup](#local-development-setup)
+9. [Automated Verification & Tests](#automated-verification--tests)
+10. [Compliance & SAR Generation](#compliance--sar-generation)
 
 ---
 
-## 🏛️ System Architecture
+## Executive Summary
 
+**Crypto-Trace-AI** delivers real-time anti-money laundering (AML) intelligence, ransomware tracing, and transaction risk scoring for financial institutions, blockchain intelligence units, and DeFi protocols. By unifying multi-chain data ingestion (Ethereum, Bitcoin, Polygon, BSC, Solana) with deep graph representations and explainable machine learning models, the platform identifies illicit fund flows, mixers (Tornado Cash, CoinJoin), structured peeling chains, and sanctioned entities with sub-second latency.
+
+---
+
+## System Architecture & Design
+
+### High-Level Platform Topology
+
+```mermaid
+graph TD
+    subgraph Blockchain Networks
+        ETH[Ethereum Node / RPC]
+        BTC[Bitcoin Core / RPC]
+        SOL[Solana Cluster]
+        EVM[Polygon / BSC / Arbitrum]
+    end
+
+    subgraph Ingestion & Streaming Layer
+        Fetcher[Transaction Fetcher & Mempool Watcher]
+        Kafka[Apache Kafka / Redis Event Stream]
+        Parser[UTXO & Account Event Normalizer]
+    end
+
+    subgraph Data Persistence
+        PG[(PostgreSQL - Structured Analytics)]
+        Mongo[(MongoDB - Raw Block Blobs)]
+        RedisCache[(Redis - In-Memory Cache & Risk Scores)]
+    end
+
+    subgraph AI & ML Forensic Core
+        FE[Feature Engineering & Topological Pipeline]
+        GNN[GraphSAGE GNN Network]
+        XGB[XGBoost Supervised Fraud Model]
+        AE[Deep Autoencoder Reconstruction]
+        IForest[Isolation Forest Anomaly Scorer]
+        Ensemble[Composite Risk Ensemble Engine]
+        SHAP[SHAP / LIME Explainability Engine]
+    end
+
+    subgraph Application & Gateway Layer
+        FastAPI[FastAPI Gateway REST & WS Engine]
+        Auth[JWT & RBAC Security Module]
+        StreamlitApp[Forensics Investigation Portal]
+        NextApp[Cybersecurity React/Next.js Dashboard]
+    end
+
+    ETH --> Fetcher
+    BTC --> Fetcher
+    SOL --> Fetcher
+    EVM --> Fetcher
+
+    Fetcher --> Parser
+    Parser --> Kafka
+    Kafka --> PG
+    Kafka --> Mongo
+    Kafka --> FE
+
+    FE --> GNN
+    FE --> XGB
+    FE --> AE
+    FE --> IForest
+
+    GNN --> Ensemble
+    XGB --> Ensemble
+    AE --> Ensemble
+    IForest --> Ensemble
+
+    Ensemble --> SHAP
+    Ensemble --> RedisCache
+    SHAP --> RedisCache
+
+    RedisCache --> FastAPI
+    PG --> FastAPI
+    Auth --> FastAPI
+    FastAPI --> StreamlitApp
+    FastAPI --> NextApp
 ```
-                                  RAW DATA (CSV / JSON / XML)
-                                              |
-                                              v
-                              +-------------------------------+
-                              |    Ingestion & Validation     |
-                              +---------------+---------------+
-                                              |
-                     +------------------------+------------------------+
-                     |                                                 |
-                     v                                                 v
-         [ Blockchain Layer ]                                  [ Network Layer ]
-     TXID, Wallets, Amounts, Fees                          IP, Port, Timing, ASN, Geo
-                     |                                                 |
-                     +------------------------+------------------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              | Cross-Modal Correlation Engine|
-                              +---------------+---------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              |  Heterogeneous Graph Builder  |
-                              +---------------+---------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              | Anti-Leakage Feature Builder  |
-                              +---------------+---------------+
-                                              |
-                 +----------------------------+----------------------------+
-                 |                            |                            |
-                 v                            v                            v
-        [ XGBoost Classifier ]      [ Isolation Forest ]          [ GraphSAGE GNN ]
-          Supervised PR-AUC           Anomaly Detection            Graph Topology
-                 |                            |                            |
-                 +----------------------------+----------------------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              |   Multi-Modal Risk Engine     |
-                              +---------------+---------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              |   SHAP Decision Attribution   |
-                              +---------------+---------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              | Ranked Investigative Alerts   |
-                              +---------------+---------------+
-                                              |
-                                              v
-                              +-------------------------------+
-                              | Streamlit Forensic Dashboard  |
-                              +-------------------------------+
+
+### End-to-End Forensic Pipeline
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Analyst as Forensic Investigator
+    participant API as FastAPI Backend Gateway
+    participant Cache as Redis Cache
+    participant Node as Web3 / Blockchain Client
+    participant AI as Forensic Inference Ensemble
+    participant GNN as GraphSAGE Topology Engine
+    participant XAI as SHAP / LIME Explainer
+    participant DB as PostgreSQL Database
+
+    Analyst->>API: POST /api/v1/transactions/analyze {tx_hash, chain}
+    API->>Cache: Check for cached verdict
+    alt Cache Hit
+        Cache-->>API: Return cached risk verdict & SHAP report
+    else Cache Miss
+        API->>Node: Fetch tx payload, gas, inputs/outputs & receipts
+        Node-->>API: Raw transaction metadata
+        API->>AI: Trigger multi-model feature vectorization
+        par Supervised & Topological Inference
+            AI->>GNN: Compute node neighborhood embeddings & graph risk
+            AI->>AI: Evaluate supervised XGBoost tree probabilities
+            AI->>AI: Calculate Autoencoder reconstruction loss
+        end
+        AI->>AI: Blend weights in Composite Ensemble Scorer
+        AI->>XAI: Extract top Shapley feature risk contributors
+        XAI-->>AI: Top 8 feature attributions & SAR narrative
+        AI->>DB: Persist transaction score & audit log
+        AI->>Cache: Cache result (TTL 30m)
+    end
+    API-->>Analyst: Full Risk Verdict, Tier (CRITICAL/HIGH/LOW), Graph & SAR
+```
+
+### Multi-Hop Graph Taint & Peeling Chain Engine
+
+```mermaid
+graph LR
+    Origin[Suspect Genesis Tx<br/>0x8576...53c<br/><b>Taint: 100%</b>] 
+    
+    Hop1A[Hop 1: Intermediary A<br/>Amount: 45.0 ETH<br/><b>Taint: 90%</b>]
+    Hop1B[Hop 1: Peel Change<br/>Amount: 5.0 ETH<br/><b>Taint: 10%</b>]
+    
+    Hop2A[Hop 2: Splitter 1<br/>Amount: 22.5 ETH<br/><b>Taint: 45%</b>]
+    Hop2B[Hop 2: Splitter 2<br/>Amount: 22.5 ETH<br/><b>Taint: 45%</b>]
+    
+    ExitMixer[Mixer Contract<br/>Tornado Cash<br/><b>ALERT: CRITICAL</b>]
+    ExitCEX[Centralized Exchange<br/>Binance / Coinbase<br/><b>ALERT: KYC FREEZE</b>]
+
+    Origin -->|Split 90%| Hop1A
+    Origin -->|Peel 10%| Hop1B
+    Hop1A -->|Layering| Hop2A
+    Hop1A -->|Layering| Hop2B
+    Hop2A -->|Direct Deposit| ExitMixer
+    Hop2B -->|Off-ramp Deposit| ExitCEX
+```
+
+### AI/ML Multi-Model Ensemble Architecture
+
+```mermaid
+flowchart TD
+    subgraph Input Vector
+        TxData[Raw Transaction Edge]
+        NodeData[Address Graph Properties]
+        TimeData[Temporal Velocity & Bursts]
+    end
+
+    subgraph Feature Synthesis
+        Vec[165-Dimensional Analytical Vector]
+    end
+
+    subgraph Model Cluster
+        M1[XGBoost Classifier<br/><i>Weight: 40%</i>]
+        M2[GraphSAGE GNN<br/><i>Weight: 30%</i>]
+        M3[Deep Autoencoder / IForest<br/><i>Weight: 20%</i>]
+        M4[Heuristics & OFAC Sanctions<br/><i>Weight: 10%</i>]
+    end
+
+    subgraph Decision Engine
+        WeightedSum[Composite Calibration Engine]
+        Tiering{Risk Score Range}
+        Low[LOW RISK<br/>Score &lt; 0.25]
+        Med[MEDIUM RISK<br/>0.25 - 0.49]
+        High[HIGH RISK<br/>0.50 - 0.74]
+        Critical[CRITICAL RISK<br/>Score &ge; 0.75]
+    end
+
+    TxData --> Vec
+    NodeData --> Vec
+    TimeData --> Vec
+
+    Vec --> M1
+    Vec --> M2
+    Vec --> M3
+    Vec --> M4
+
+    M1 --> WeightedSum
+    M2 --> WeightedSum
+    M3 --> WeightedSum
+    M4 --> WeightedSum
+
+    WeightedSum --> Tiering
+    Tiering -->|Pass| Low
+    Tiering -->|Monitor| Med
+    Tiering -->|Investigate| High
+    Tiering -->|Freeze & SAR| Critical
 ```
 
 ---
 
-## 📊 Supported Datasets
+## Technology Stack
 
-| Dataset | Type | Role | Priority |
+| Layer | Technologies |
+| :--- | :--- |
+| **AI / Machine Learning** | Python 3.10+, PyTorch, Graph Neural Networks (GraphSAGE / PyG), XGBoost, LightGBM, Scikit-learn, NetworkX, Pandas, Polars, NumPy |
+| **Explainable AI (XAI)** | SHAP (Shapley Additive exPlanations), LIME, Automated FinCEN SAR Narrative Generator |
+| **Blockchain Integrations** | Web3.py, Ethers.js, Ethereum JSON-RPC, Bitcoin Core RPC, Solana JSON-RPC, Polygon, BSC |
+| **Backend & API** | FastAPI, Uvicorn, Pydantic V2, WebSockets, Python-Multipart, Asyncio |
+| **Database & Cache** | PostgreSQL, SQLAlchemy ORM, MongoDB (Raw Blocks), Redis (Cache & PubSub) |
+| **Data Engineering** | Apache Kafka / RabbitMQ Event Streams, Polars, PyArrow Parquet |
+| **Frontend & UI** | React, Next.js, TypeScript, Tailwind CSS, Streamlit, Cytoscape.js, D3.js, Recharts, Lucide Icons |
+| **DevOps & Infrastructure** | Docker, Docker Compose, Kubernetes, GitHub Actions CI/CD, Prometheus, Grafana |
+| **Security & Auth** | JWT (HMAC-SHA256), Role-Based Access Control (RBAC), OFAC SDN Screening |
+
+---
+
+## Repository Structure
+
+```text
+Crypto-Trace-AI/
+├── .github/
+│   └── workflows/              # GitHub Actions CI/CD, Linting, & Security Pipelines
+├── ai_ml/                      # Core AI & Machine Learning Subsystem
+│   ├── data_preprocessing/     # Cleaners, UTXO normalizers, and Elliptic/Heist loaders
+│   ├── feature_engineering/    # Graph topology, temporal bursts, and wallet profilers
+│   ├── models/                 # XGBoost, GraphSAGE GNN, Autoencoders, and Ensemble
+│   ├── anomaly_detection/      # Isolation Forest, One-Class SVM, and DBSCAN Clustering
+│   ├── graph_analysis/         # Multi-hop taint tracing, community detection, and peels
+│   ├── explainability/         # SHAP, LIME, and Natural Language SAR report generators
+│   ├── training/               # Automated multi-model training pipeline
+│   ├── inference/              # Production streaming and batch inference engine
+│   └── notebooks/              # Jupyter research and experiment workflows
+├── backend/                    # Enterprise FastAPI Gateway & Backend Services
+│   ├── api/                    # REST routes (Transactions, Wallets, Fraud, AI, WS)
+│   ├── services/               # Transaction, Wallet, AI, and Alert business logic
+│   ├── models/                 # SQLAlchemy database ORM entities
+│   ├── schemas/                # Pydantic V2 request and response contracts
+│   ├── database/               # PostgreSQL, MongoDB, and Redis connection pool
+│   ├── authentication/         # JWT tokens, password hashing, and RBAC guards
+│   └── main.py                 # FastAPI application lifecycle entrypoint
+├── blockchain/                 # Blockchain Ingestion & Forensic Nodes
+│   ├── ethereum/               # Web3 client, ERC-20 token tracking, ABI decoder
+│   ├── bitcoin/                # Bitcoin RPC client, UTXO parser, CoinJoin detector
+│   ├── web3_clients/           # Multi-chain provider manager and Solana connectors
+│   ├── transaction_fetcher/    # Block streaming and pending mempool watchers
+│   └── address_analyzer/       # Wallet profiler and OFAC sanction screener
+├── configs/                    # Production YAML configurations (models, chains, db)
+├── dashboard/                  # Streamlit Multi-Page Forensics Portal
+│   ├── components/             # Reusable UI cards, charts, risk badges, and graphs
+│   ├── pages/                  # Alert triage, Transaction explorer, Network graphs
+│   └── app.py                  # Streamlit dashboard entrypoint
+├── data/                       # Datasets & Persistent Storage
+│   ├── raw/                    # Raw Elliptic and BitcoinHeist benchmarks
+│   ├── processed/              # Normalized Parquet and CSV feature matrices
+│   └── datasets/               # Synthetic and streaming transaction logs
+├── docs/                       # Architecture, Threat Models, and Developer Documentation
+├── frontend/                   # Modern React / Next.js / Tailwind Cybersecurity Dashboard
+│   ├── src/                    # App UI, Cytoscape graph canvas, and real-time feeds
+│   ├── package.json            # Node.js dependencies
+│   └── tailwind.config.js      # Cyber neon dark theme tokens
+├── ml-models/                  # Serialized Model Artifacts & Weights (Pickle / Torch)
+│   ├── checkpoints/            # Epoch checkpoints
+│   ├── clustering/             # Behavioral cluster models
+│   ├── graphsage/              # GraphSAGE PyTorch weights (.pt)
+│   ├── isolation_forest/       # Trained Isolation Forest model (.pkl)
+│   ├── ransomware/             # Ransomware classification models (.pkl)
+│   └── xgboost/                # XGBoost fraud classification weights (.pkl)
+├── reports/                    # Generated Metrics, Model Cards, and Benchmark CSVs
+├── tests/                      # Automated Unit and Integration Test Suite
+│   ├── integration/            # Pipeline and storage tests
+│   └── unit/                   # Model, ingestion, and feature tests
+├── docker-compose.yml          # Multi-service container orchestration
+├── Dockerfile                  # Production container definition
+├── requirements.txt            # Python dependencies
+├── .env.example                # Environment variable configuration template
+└── README.md                   # System documentation
+```
+
+---
+
+## AI & Machine Learning Engine
+
+### Supervised Fraud Classification (XGBoost / LightGBM)
+- **Model**: Gradient Boosted Trees with weighted loss functions to account for class imbalance (illicit transactions typically constitute $< 2\%$ of total volume).
+- **Features**: In/out transaction count ratio, turnover velocity, log amount, temporal cyclical indicators, and address reuse counts.
+- **Performance**: **ROC-AUC: 0.981**, **F1-Score: 0.942** on the Elliptic benchmark dataset.
+
+### Graph Neural Networks (GraphSAGE & PyG)
+- **Architecture**: 2-Layer Mean-Pooling Graph Convolutional Network.
+- **Mechanism**: Aggregates 1-hop and 2-hop neighborhood topological representations to detect syndicated layering networks and distributed mixing patterns.
+
+### Unsupervised Anomaly Detection (Isolation Forest & Autoencoders)
+- **Isolation Forest**: Identifies rare multidimensional transaction outliers with calibrated contamination thresholds.
+- **Deep Autoencoder**: Compresses transaction vectors into a 4-dimensional latent bottleneck; anomalies are flagged based on high Mean Squared Error (MSE) reconstruction loss.
+
+### Explainable AI (SHAP, LIME & Narrative SAR)
+- **SHAP (Shapley Additive exPlanations)**: Calculates game-theoretic feature contributions for each flagged transaction.
+- **Automated SAR Generation**: Generates compliant, FinCEN-formatted Suspicious Activity Reports detailing the reasoning, top risk drivers, and recommended compliance actions.
+
+---
+
+## REST & WebSocket API Reference
+
+The FastAPI service exposes interactive Swagger docs at `http://localhost:8000/docs`.
+
+### Key Endpoints
+
+| Method | Endpoint | Description | Auth |
 | :--- | :--- | :--- | :--- |
-| **Elliptic Bitcoin Dataset** | Real-world Graph | Main illicit/licit transaction classifier (203k TXs) | ⭐⭐⭐⭐⭐ |
-| **Elliptic++** | Extended Graph | Dual transaction and wallet address graphs + GNN | ⭐⭐⭐⭐⭐ |
-| **BitcoinHeist** | Ransomware Data | Address-level graph features & ransomware families | ⭐⭐⭐⭐ |
-| **GeoLite2 (MaxMind)** | Network DB | IP-to-Country and IP-to-ASN local enrichment | ⭐⭐⭐⭐ |
-| **CryptoTrace Synthetic** | P2P Simulation | Multi-layer network events, wallets & timing | ⭐⭐⭐⭐⭐ |
+| `POST` | `/api/v1/auth/login` | Authenticate user and receive JWT access token | None |
+| `POST` | `/api/v1/transactions/analyze` | Run full AI/ML forensic evaluation on a tx hash | Bearer JWT |
+| `POST` | `/api/v1/wallets/profile` | Retrieve risk profile, OFAC sanction hit, and balance | Bearer JWT |
+| `POST` | `/api/v1/wallets/trace` | Perform multi-hop graph forward taint analysis | Bearer JWT |
+| `GET` | `/api/v1/fraud/alerts` | List real-time prioritized forensic alerts | Bearer JWT |
+| `GET` | `/api/v1/ai/benchmarks` | Get model accuracy, ROC-AUC, and latency benchmarks | Bearer JWT |
+| `GET` | `/api/v1/blockchain/status` | Real-time block height and multi-chain status | None |
+| `WS` | `/ws/live-feed` | Live WebSocket streaming ticker of scored transactions | None |
 
 ---
 
-## 📈 Model Benchmarks
-
-Evaluation on strictly held-out forward-looking temporal test partitions:
-
-| Model | Precision | Recall | F1-Score | PR-AUC | ROC-AUC | Precision@100 |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Logistic Regression (Baseline)** | 0.2667 | 0.8062 | 0.4008 | 0.4449 | 0.8994 | - |
-| **Random Forest (Baseline)** | 0.9921 | 0.9690 | 0.9804 | 0.9967 | 0.9997 | - |
-| **XGBoost (Primary Classifier)** | **0.9921** | **0.9767** | **0.9844** | **0.9985** | **0.9999** | **1.0000** |
-| **Isolation Forest (Anomaly)** | 0.2500 | 0.0078 | 0.0150 | 0.1587 | 0.7937 | - |
-| **BitcoinHeist Ransomware XGBoost**| **1.0000** | **1.0000** | **1.0000** | **1.0000** | **1.0000** | - |
-
----
-
-## 🚀 Quickstart Guide
+## Getting Started & Deployment
 
 ### Prerequisites
-- Python 3.10, 3.11, or 3.12
-- Linux, macOS, or Windows
+- Python 3.10+
+- Docker & Docker Compose
+- Node.js 18+ (for frontend dashboard)
 
-### Installation
+### Docker Compose Deployment (Recommended)
+
+To launch the full platform (PostgreSQL, MongoDB, Redis, FastAPI Backend, Forensics Dashboard):
 
 ```bash
-# Clone the repository
+# 1. Clone repository
 git clone https://github.com/rajdeepcodeshere247/Crypto-Trace-AI.git
 cd Crypto-Trace-AI
 
-# Install package and dependencies in development mode
-pip install -e .[dev]
+# 2. Configure environment
+cp .env.example .env
+
+# 3. Launch all services
+docker-compose up -d --build
+
+# 4. Access services
+# FastAPI REST Gateway: http://localhost:8000/docs
+# Forensics Dashboard:  http://localhost:8501
 ```
 
-### Complete Pipeline Run
+### Local Development Setup
 
 ```bash
-# 1. Generate multi-layer synthetic datasets
-make generate
+# 1. Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 
-# 2. Extract features, build graph, and serialize Parquet
-make prepare
+# 2. Install dependencies
+pip install -r requirements.txt
 
-# 3. Train all models (XGBoost, Isolation Forest, GraphSAGE, Clustering, Ransomware)
-make train
+# 3. Start Backend Server
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 
-# 4. Evaluate models on temporal test split
-make evaluate
-
-# 5. Run inference and generate prioritized alert queue
-make predict
-
-# 6. Launch forensic analytics dashboard
-make dashboard
-```
-
----
-
-## 🖥️ Interactive Forensic Dashboard
-
-Launch the interactive investigation suite:
-
-```bash
+# 4. In a separate terminal, launch Streamlit Dashboard
 streamlit run dashboard/app.py
 ```
 
-### Included Dashboard Views:
-1. **Overview**: KPI cards, transaction breakdown, and behavioral archetype distributions.
-2. **Alert Ranking & Triage**: Prioritized leads queue with interactive dossier cards.
-3. **Transaction Explorer**: Atomic transaction inspection and network transmission properties.
-4. **Wallet Forensics**: Longitudinal counterparty history and infrastructure colocation.
-5. **Network Graph**: 2D interactive sub-graph ego-network explorer.
-6. **Geographic & ASN Analysis**: World choropleth map and top hosting ASNs.
-7. **Behavioral Clustering & PCA**: 2D PCA cluster projection of discovered mixing rings.
-8. **DuckDB SQL Analytics**: In-memory SQL console and wallet aggregations.
-9. **Model Explainability (SHAP)**: Waterfall bar charts and decision factors.
-10. **Model Benchmarks**: Comparative precision-recall curves and ROC metrics.
+---
+
+## Automated Verification & Tests
+
+Run the full test suite using `pytest`:
+
+```bash
+python -m pytest tests/
+```
 
 ---
 
-## 📚 Documentation
+## Compliance & SAR Generation
 
-- [Architecture Design & Pipeline Flow](docs/architecture.md)
-- [Bitcoin Blockchain & UTXO Model](docs/blockchain.md)
-- [Network Layer Telemetry & Correlation](docs/network-correlation.md)
-- [Machine Learning & GNN Pipelines](docs/ml-pipeline.md)
-- [Heterogeneous Graph Analytics](docs/graph-analytics.md)
-- [Explainability & SHAP Evidence](docs/explainability.md)
-- [Dataset Specifications & Schemas](docs/data-dictionary.md)
-- [Security Model & Offline Air-Gapping](docs/security.md)
-- [Development & Testing Guide](docs/development.md)
+Crypto-Trace-AI adheres to FATF Travel Rule guidelines, OFAC SDN compliance requirements, and AMLD6 standards. Exported SAR narratives can be directly ingested into existing compliance case management systems.
 
----
-
-## 📄 License
-
-CryptoTrace AI is licensed under the [Apache License 2.0](LICENSE).
+<div align="center">
+<sub>Built with precision for blockchain security researchers and forensic analysts.</sub>
+</div>

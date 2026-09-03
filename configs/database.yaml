@@ -1,0 +1,28 @@
+# Database & Cache Configurations
+postgres:
+  host: "${POSTGRES_HOST:-localhost}"
+  port: 5432
+  database: "cryptotrace"
+  user: "${POSTGRES_USER:-postgres}"
+  password: "${POSTGRES_PASSWORD:-postgres}"
+  pool_size: 20
+  max_overflow: 10
+
+mongodb:
+  uri: "${MONGO_URI:-mongodb://localhost:27017}"
+  database: "cryptotrace"
+  collections:
+    - "raw_blocks"
+    - "mempool_events"
+    - "unstructured_logs"
+
+redis:
+  url: "${REDIS_URL:-redis://localhost:6379/0}"
+  ttl_seconds: 3600
+
+streaming:
+  broker_type: "kafka" # kafka | rabbitmq
+  kafka_brokers: "${KAFKA_BROKERS:-localhost:9092}"
+  topics:
+    transactions: "blockchain.transactions.raw"
+    alerts: "forensics.alerts.high_risk"

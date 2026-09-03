@@ -1,17 +1,92 @@
+version: '3.8'
+
 services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: cryptotrace-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: cryptotrace
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # MongoDB Unstructured Blockchain Store
+  mongodb:
+    image: mongo:6.0
+    container_name: cryptotrace-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  # Redis Cache & Real-Time PubSub
+  redis:
+    image: redis:7-alpine
+    container_name: cryptotrace-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cryptotrace-backend
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - .:/app
+      - ./ml-models:/app/ml-models
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cryptotrace
+      - REDIS_URL=redis://redis:6379/0
+      - MONGO_URI=mongodb://mongodb:27017
+      - ETH_RPC_URL=${ETH_RPC_URL:-https://eth.llamarpc.com}
+      - JWT_SECRET=${JWT_SECRET:-super-secret-crypto-trace-jwt-key-32-chars-long}
+    restart: unless-stopped
+
+  # Streamlit Forensics Dashboard
   dashboard:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: cryptotrace-dashboard
+    command: streamlit run dashboard/app.py --server.port=8501 --server.address=0.0.0.0
     ports:
       - "8501:8501"
+    depends_on:
+      - backend
     volumes:
+      - .:/app
+      - ./ml-models:/app/ml-models
       - ./data:/app/data
-      - ./models:/app/models
       - ./reports:/app/reports
-      - ./configs:/app/configs
     environment:
-      - ENVIRONMENT=production
-      - LOG_LEVEL=INFO
+      - BACKEND_API_URL=http://backend:8000/api/v1
     restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
